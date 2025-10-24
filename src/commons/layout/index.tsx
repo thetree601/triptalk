@@ -11,33 +11,44 @@ export default function Layout({ children }: LayoutProps) {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          {/* Header content will be implemented here */}
+          <div className={styles.areaLabel}>Header (1280×80)</div>
         </div>
       </header>
 
       {/* Banner */}
       <section className={styles.banner}>
-        {/* Banner content will be implemented here */}
+        <div className={styles.areaLabel}>Banner (1920×516)</div>
       </section>
 
       {/* Gap between banner and API section */}
-      <div className={styles.gap}></div>
+      <div className={styles.gap}>
+        <div className={styles.gapLabel}>Gap (1920×40)</div>
+      </div>
 
       {/* API Section */}
       <section className={styles.apiSection}>
-        {/* API loading area will be implemented here */}
+        <div className={styles.apiContent}>
+          <div className={styles.areaLabel}>API Section (1280×212)</div>
+        </div>
       </section>
 
       {/* Gap between API section and main content */}
-      <div className={styles.gap}></div>
+      <div className={styles.gap}>
+        <div className={styles.gapLabel}>Gap (1920×40)</div>
+      </div>
 
       {/* Main Content (children) */}
       <main className={styles.mainContent}>
-        {children}
+        <div className={styles.mainContentWrapper}>
+          <div className={styles.areaLabel}>Main Content (1280×828)</div>
+          {children}
+        </div>
       </main>
 
       {/* Bottom gap */}
-      <div className={styles.bottomGap}></div>
+      <div className={styles.bottomGap}>
+        <div className={styles.gapLabel}>Bottom Gap (1920×56)</div>
+      </div>
     </div>
   );
 }
