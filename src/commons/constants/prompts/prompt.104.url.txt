@@ -18,7 +18,7 @@
                   - 경로명: /auth/login
                   - 접근가능상태: [누구나]
                   - 노출가능목록
-                     - header X(로고 X, 다크모드전환토글 X)
+                     - header X(로고 X)
                      - banner X
       
 
@@ -26,29 +26,29 @@
                   - 경로명: /auth/signup
                   - 접근가능상태: [누구나]
                   - 노출가능목록
-                     - header X(로고 X, 다크모드전환토글 X)
+                     - header X(로고 X)
                      - banner X
       
 
-               3) 여행포스트
+               3) 여행포스트목록
                   - 경로명: /tripposts
                   - 접근가능상태: [누구나]
                   - 노출가능목록
-                     - header O(로고 O, 다크모드전환토글 X)
+                     - header O(로고 O)
                      - banner O
          
 
                4) 여행포스트상세
                   - 경로명: /tripposts/[id]
-                  - 접근가능상태: [회원전용]
+                  - 접근가능상태: [누구나]
                   - 노출가능목록
-                     - header O(로고 O, 다크모드전환토글 X)
+                     - header O(로고 O)
                      - banner O
 
 
                5) 여행포스트등록
                   - 경로명: /tripposts/new
-                  - 접근가능상태: [회원전용]
+                  - 접근가능상태: [누구나]
                   - 노출가능목록
-                     - header O(로고 O, 다크모드전환토글 X)
+                     - header O(로고 O)
                      - banner X

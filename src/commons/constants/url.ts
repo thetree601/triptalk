@@ -70,7 +70,7 @@ export const ROUTE_CONFIG: Record<string, RouteInfo> = {
   // 여행포스트상세
   [URL_PATHS.TRIPPOSTS_DETAIL]: {
     path: URL_PATHS.TRIPPOSTS_DETAIL,
-    accessStatus: 'member-only',
+    accessStatus: 'public',
     visibility: {
       header: true,
       logo: true,
@@ -81,7 +81,7 @@ export const ROUTE_CONFIG: Record<string, RouteInfo> = {
   // 여행포스트등록
   [URL_PATHS.TRIPPOSTS_NEW]: {
     path: URL_PATHS.TRIPPOSTS_NEW,
-    accessStatus: 'member-only',
+    accessStatus: 'public',
     visibility: {
       header: true,
       logo: true,
