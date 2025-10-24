@@ -11,10 +11,8 @@
 ==============================================
 
 조건-피그마) 활용할MCP: CursorTalkToFigmaMCP(채널명: 1dpsknz9)
-조건-피그마) 구현될 컴포넌트 노드ID(header): 3:1542
-조건-피그마) 구현될 컴포넌트 노드ID(banner): 3:1549
-조건-피그마) 구현될 컴포넌트 노드ID(navigation): 3:1512
-조건-피그마) 구현될 컴포넌트 노드ID(footer): 55:2167
+조건-피그마) 구현될 컴포넌트 노드ID(header): 285:33451
+조건-피그마) 구현될 컴포넌트 노드ID(banner): 285:33452
 
 조건-파일경로) 구현될 TSX 파일경로: src/commons/layout/index.tsx
 조건-파일경로) 구현될 CSS 파일경로: src/commons/layout/styles.module.css

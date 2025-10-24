@@ -1,0 +1,114 @@
+/* Layout Container */
+.layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  width: 100%;
+  height: 80px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+}
+
+.headerContent {
+  width: 1280px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Banner */
+.banner {
+  width: 100%;
+  height: 516px;
+  background-color: #d9d9d9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Gap between sections */
+.gap {
+  width: 100%;
+  height: 40px;
+}
+
+/* API Section */
+.apiSection {
+  width: 100%;
+  height: 212px;
+  display: flex;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.apiSection > div {
+  width: 1280px;
+  height: 212px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Main Content */
+.mainContent {
+  width: 100%;
+  min-height: 828px;
+  display: flex;
+  justify-content: center;
+  background-color: #ffffff;
+}
+
+.mainContent > div {
+  width: 1280px;
+  min-height: 828px;
+  padding: 20px 0;
+}
+
+/* Bottom Gap */
+.bottomGap {
+  width: 100%;
+  height: 56px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1280px) {
+  .headerContent,
+  .apiSection > div,
+  .mainContent > div {
+    width: 100%;
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: 60px;
+  }
+  
+  .headerContent {
+    height: 60px;
+  }
+  
+  .banner {
+    height: 300px;
+  }
+  
+  .apiSection {
+    height: 150px;
+  }
+  
+  .mainContent {
+    min-height: 600px;
+  }
+  
+  .mainContent > div {
+    min-height: 600px;
+  }
+}
