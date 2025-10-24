@@ -120,10 +120,123 @@
   }
 }
 
+/* Typography CSS Variables */
+:root {
+  /* Font Families */
+  --font-family-korean-primary: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, Roboto, Helvetica Neue, Segoe UI, Apple SD Gothic Neo, Noto Sans KR, Malgun Gothic, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, sans-serif;
+  --font-family-korean-heading: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, Helvetica Neue, Segoe UI, Apple SD Gothic Neo, Noto Sans KR, Malgun Gothic, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, sans-serif;
+  --font-family-english-primary: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, Roboto, Helvetica Neue, Segoe UI, sans-serif;
+  --font-family-english-heading: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, Roboto, Helvetica Neue, Segoe UI, sans-serif;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semiBold: 600;
+  --font-weight-bold: 700;
+
+  /* Typography Tokens - Mobile First */
+  --typography-h1-font-family: var(--font-family-korean-heading);
+  --typography-h1-font-size: 24px;
+  --typography-h1-font-weight: var(--font-weight-bold);
+  --typography-h1-line-height: 36px;
+
+  --typography-h2-font-family: var(--font-family-korean-primary);
+  --typography-h2-font-size: 16px;
+  --typography-h2-font-weight: var(--font-weight-semiBold);
+  --typography-h2-line-height: 24px;
+
+  --typography-large-font-family: var(--font-family-korean-primary);
+  --typography-large-font-size: 16px;
+  --typography-large-font-weight: var(--font-weight-semiBold);
+  --typography-large-line-height: 24px;
+
+  --typography-regular-font-family: var(--font-family-korean-primary);
+  --typography-regular-font-size: 14px;
+  --typography-regular-font-weight: var(--font-weight-medium);
+  --typography-regular-line-height: 21px;
+
+  --typography-small-font-family: var(--font-family-korean-primary);
+  --typography-small-font-size: 12px;
+  --typography-small-font-weight: var(--font-weight-medium);
+  --typography-small-line-height: 18px;
+
+  --typography-caption-font-family: var(--font-family-korean-primary);
+  --typography-caption-font-size: 10px;
+  --typography-caption-font-weight: var(--font-weight-regular);
+  --typography-caption-line-height: 15px;
+}
+
+/* Desktop Typography Overrides */
+@media (min-width: 768px) {
+  :root {
+    --typography-h1-font-size: 28px;
+    --typography-h1-line-height: 42px;
+
+    --typography-h2-font-size: 18px;
+    --typography-h2-line-height: 27px;
+
+    --typography-large-font-size: 18px;
+    --typography-large-line-height: 27px;
+
+    --typography-regular-font-size: 16px;
+    --typography-regular-line-height: 24px;
+
+    --typography-small-font-size: 14px;
+    --typography-small-line-height: 21px;
+
+    --typography-caption-font-size: 12px;
+    --typography-caption-line-height: 18px;
+  }
+}
+
+/* Typography Utility Classes */
+.typography-h1 {
+  font-family: var(--typography-h1-font-family);
+  font-size: var(--typography-h1-font-size);
+  font-weight: var(--typography-h1-font-weight);
+  line-height: var(--typography-h1-line-height);
+}
+
+.typography-h2 {
+  font-family: var(--typography-h2-font-family);
+  font-size: var(--typography-h2-font-size);
+  font-weight: var(--typography-h2-font-weight);
+  line-height: var(--typography-h2-line-height);
+}
+
+.typography-large {
+  font-family: var(--typography-large-font-family);
+  font-size: var(--typography-large-font-size);
+  font-weight: var(--typography-large-font-weight);
+  line-height: var(--typography-large-line-height);
+}
+
+.typography-regular {
+  font-family: var(--typography-regular-font-family);
+  font-size: var(--typography-regular-font-size);
+  font-weight: var(--typography-regular-font-weight);
+  line-height: var(--typography-regular-line-height);
+}
+
+.typography-small {
+  font-family: var(--typography-small-font-family);
+  font-size: var(--typography-small-font-size);
+  font-weight: var(--typography-small-font-weight);
+  line-height: var(--typography-small-line-height);
+}
+
+.typography-caption {
+  font-family: var(--typography-caption-font-family);
+  font-size: var(--typography-caption-font-size);
+  font-weight: var(--typography-caption-font-weight);
+  line-height: var(--typography-caption-line-height);
+}
+
 body {
   color: var(--color-text-primary);
   background: var(--color-background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-korean-primary);
 }
 
 @layer utilities {
