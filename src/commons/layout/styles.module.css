@@ -27,6 +27,13 @@
   padding: 0 20px;
 }
 
+/* Logo and Navigation Group */
+.logoNavGroup {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 /* Logo Area */
 .logoArea {
   display: flex;
@@ -51,7 +58,7 @@
 .navigation {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
 }
 
 .tab {
@@ -59,11 +66,11 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .tab.active {
-  background-color: var(--color-background);
-  border: 1px solid var(--color-text-primary);
+  border-bottom: 2px solid var(--color-text-primary);
 }
 
 .tabText {
@@ -383,8 +390,17 @@
     padding: 0 16px;
   }
   
+  .logoNavGroup {
+    gap: 12px;
+  }
+  
+  .logo {
+    width: 40px;
+    height: 24px;
+  }
+  
   .navigation {
-    gap: 4px;
+    gap: 0;
   }
   
   .tab {

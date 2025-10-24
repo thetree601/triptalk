@@ -12,31 +12,34 @@ export default function Layout({ children }: LayoutProps) {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          {/* Logo Area */}
-          <div className={styles.logoArea}>
-            <div className={styles.logo}>
-              <Image 
-                src="/icons/logo.png" 
-                alt="TripTalk Logo" 
-                width={56}
-                height={32}
-                priority
-              />
+          {/* Logo and Navigation Group */}
+          <div className={styles.logoNavGroup}>
+            {/* Logo Area */}
+            <div className={styles.logoArea}>
+              <div className={styles.logo}>
+                <Image 
+                  src="/icons/logo.png" 
+                  alt="TripTalk Logo" 
+                  width={56}
+                  height={32}
+                  priority
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Navigation Tabs */}
-          <nav className={styles.navigation}>
-            <div className={`${styles.tab} ${styles.active}`}>
-              <span className={styles.tabText}>트립토크</span>
-            </div>
-            <div className={styles.tab}>
-              <span className={styles.tabText}>숙박권 구매</span>
-            </div>
-            <div className={styles.tab}>
-              <span className={styles.tabText}>마이 페이지</span>
-            </div>
-          </nav>
+            {/* Navigation Tabs */}
+            <nav className={styles.navigation}>
+              <div className={`${styles.tab} ${styles.active}`}>
+                <span className={styles.tabText}>트립토크</span>
+              </div>
+              <div className={styles.tab}>
+                <span className={styles.tabText}>숙박권 구매</span>
+              </div>
+              <div className={styles.tab}>
+                <span className={styles.tabText}>마이 페이지</span>
+              </div>
+            </nav>
+          </div>
 
           {/* User Actions */}
           <div className={styles.userActions}>
