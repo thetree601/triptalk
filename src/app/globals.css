@@ -3,20 +3,126 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light mode color tokens */
+  --color-background-light: #ffffff;
+  --color-background-secondary-light: #f2f2f2;
+  --color-background-tertiary-light: #e4e4e4;
+  
+  --color-text-primary-light: #000000;
+  --color-text-secondary-light: #333333;
+  --color-text-tertiary-light: #777777;
+  --color-text-disabled-light: #ababab;
+  --color-text-inverse-light: #ffffff;
+  
+  --color-border-primary-light: #d4d3d3;
+  --color-border-secondary-light: #c7c7c7;
+  --color-border-focus-light: #2974e5;
+  
+  --color-primary-light: #2974e5;
+  --color-primary-hover-light: #1e5bb8;
+  --color-primary-active-light: #1a4fa0;
+  
+  --color-success-light: #10b981;
+  --color-warning-light: #f59e0b;
+  --color-error-light: #f66a6a;
+  --color-info-light: #2974e5;
+  
+  --color-neutral-light: #919191;
+  --color-neutral-light-light: #c7c7c7;
+  --color-neutral-dark-light: #5f5f5f;
+  
+  /* Dark mode color tokens */
+  --color-background-dark: #000000;
+  --color-background-secondary-dark: #1c1c1c;
+  --color-background-tertiary-dark: #333333;
+  
+  --color-text-primary-dark: #ffffff;
+  --color-text-secondary-dark: #d4d3d3;
+  --color-text-tertiary-dark: #ababab;
+  --color-text-disabled-dark: #777777;
+  --color-text-inverse-dark: #000000;
+  
+  --color-border-primary-dark: #5f5f5f;
+  --color-border-secondary-dark: #777777;
+  --color-border-focus-dark: #2974e5;
+  
+  --color-primary-dark: #2974e5;
+  --color-primary-hover-dark: #3d85e8;
+  --color-primary-active-dark: #4a8ceb;
+  
+  --color-success-dark: #10b981;
+  --color-warning-dark: #f59e0b;
+  --color-error-dark: #f66a6a;
+  --color-info-dark: #2974e5;
+  
+  --color-neutral-dark: #919191;
+  --color-neutral-light-dark: #777777;
+  --color-neutral-dark-dark: #c7c7c7;
+  
+  /* Default to light mode */
+  --color-background: var(--color-background-light);
+  --color-background-secondary: var(--color-background-secondary-light);
+  --color-background-tertiary: var(--color-background-tertiary-light);
+  
+  --color-text-primary: var(--color-text-primary-light);
+  --color-text-secondary: var(--color-text-secondary-light);
+  --color-text-tertiary: var(--color-text-tertiary-light);
+  --color-text-disabled: var(--color-text-disabled-light);
+  --color-text-inverse: var(--color-text-inverse-light);
+  
+  --color-border-primary: var(--color-border-primary-light);
+  --color-border-secondary: var(--color-border-secondary-light);
+  --color-border-focus: var(--color-border-focus-light);
+  
+  --color-primary: var(--color-primary-light);
+  --color-primary-hover: var(--color-primary-hover-light);
+  --color-primary-active: var(--color-primary-active-light);
+  
+  --color-success: var(--color-success-light);
+  --color-warning: var(--color-warning-light);
+  --color-error: var(--color-error-light);
+  --color-info: var(--color-info-light);
+  
+  --color-neutral: var(--color-neutral-light);
+  --color-neutral-light: var(--color-neutral-light-light);
+  --color-neutral-dark: var(--color-neutral-dark-light);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Switch to dark mode variables */
+    --color-background: var(--color-background-dark);
+    --color-background-secondary: var(--color-background-secondary-dark);
+    --color-background-tertiary: var(--color-background-tertiary-dark);
+    
+    --color-text-primary: var(--color-text-primary-dark);
+    --color-text-secondary: var(--color-text-secondary-dark);
+    --color-text-tertiary: var(--color-text-tertiary-dark);
+    --color-text-disabled: var(--color-text-disabled-dark);
+    --color-text-inverse: var(--color-text-inverse-dark);
+    
+    --color-border-primary: var(--color-border-primary-dark);
+    --color-border-secondary: var(--color-border-secondary-dark);
+    --color-border-focus: var(--color-border-focus-dark);
+    
+    --color-primary: var(--color-primary-dark);
+    --color-primary-hover: var(--color-primary-hover-dark);
+    --color-primary-active: var(--color-primary-active-dark);
+    
+    --color-success: var(--color-success-dark);
+    --color-warning: var(--color-warning-dark);
+    --color-error: var(--color-error-dark);
+    --color-info: var(--color-info-dark);
+    
+    --color-neutral: var(--color-neutral-dark);
+    --color-neutral-light: var(--color-neutral-light-dark);
+    --color-neutral-dark: var(--color-neutral-dark-dark);
   }
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--color-text-primary);
+  background: var(--color-background);
   font-family: Arial, Helvetica, sans-serif;
 }
 
