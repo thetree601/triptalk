@@ -4,16 +4,16 @@
   flex-direction: column;
   width: 100%;
   min-height: 100vh;
+  background-color: var(--color-background);
 }
 
 /* Header */
 .header {
   width: 100%;
   height: 80px;
-  background-color: #ffffff;
+  background-color: var(--color-background);
   display: flex;
   justify-content: center;
-  border: 2px solid #007bff;
   position: relative;
 }
 
@@ -24,109 +24,343 @@
   align-items: center;
   justify-content: space-between;
   position: relative;
-  border: 1px solid #007bff;
-  background-color: #f0f8ff;
+  padding: 0 20px;
+}
+
+/* Logo Area */
+.logoArea {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 56px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Navigation */
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab {
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab.active {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-text-primary);
+}
+
+.tabText {
+  font-family: var(--font-family-korean-primary);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--color-text-secondary);
+}
+
+.tab.active .tabText {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* User Actions */
+.userActions {
+  display: flex;
+  align-items: center;
+}
+
+.loginButton {
+  background-color: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: 100px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loginButton:hover {
+  background-color: var(--color-text-secondary);
+}
+
+.loginText {
+  font-family: var(--font-family-korean-primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
 }
 
 /* Banner */
 .banner {
   width: 100%;
   height: 516px;
-  background-color: #d9d9d9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid #28a745;
   position: relative;
+  overflow: hidden;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.bannerImage img {
+  object-fit: cover;
+}
+
+.bannerImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bannerIndicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.indicator.active {
+  background-color: var(--color-background);
+  border-radius: 4px;
+  width: 8px;
+}
+
+.bannerArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.bannerArrow:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.leftArrow {
+  left: 20px;
+}
+
+.rightArrow {
+  right: 20px;
+}
+
+.bannerArrow img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
 }
 
 /* Gap between sections */
 .gap {
   width: 100%;
   height: 40px;
-  background-color: #f8f9fa;
-  border: 1px dashed #6c757d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  background-color: var(--color-background);
 }
 
 /* API Section */
 .apiSection {
   width: 100%;
-  height: 212px;
+  min-height: 212px;
   display: flex;
   justify-content: center;
-  background-color: #f5f5f5;
-  border: 2px solid #ffc107;
+  background-color: var(--color-background);
   position: relative;
 }
 
 .apiContent {
   width: 1280px;
-  height: 212px;
+  padding: 20px;
+  position: relative;
+}
+
+.apiTitle {
+  font-family: var(--font-family-korean-heading);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 36px;
+  color: var(--color-text-primary);
+  margin-bottom: 20px;
+}
+
+.apiCards {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.tripTalkCard {
+  min-width: 296px;
+  height: 152px;
+  background-color: var(--color-background);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.tripTalkCard:hover {
+  transform: translateY(-2px);
+}
+
+.cardImage {
+  width: 112px;
+  height: 152px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardContent {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  font-family: var(--font-family-korean-primary);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardProfile {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.profileImage {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
   position: relative;
-  border: 1px solid #ffc107;
-  background-color: #fffbf0;
+}
+
+.profileImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileName {
+  font-family: var(--font-family-korean-primary);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.likeArea {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.likeIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.likeCount {
+  font-family: var(--font-family-korean-primary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-error);
+}
+
+.cardDate {
+  font-family: var(--font-family-korean-primary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-text-tertiary);
 }
 
 /* Main Content */
 .mainContent {
   width: 100%;
-  height: 828px;
+  min-height: 828px;
   display: flex;
   justify-content: center;
-  background-color: #ffffff;
-  border: 2px solid #dc3545;
+  background-color: var(--color-background);
   position: relative;
 }
 
 .mainContentWrapper {
   width: 1280px;
-  height: 828px;
-  padding: 20px 0;
+  padding: 20px;
   position: relative;
-  border: 1px solid #ff6b6b;
-  background-color: #fff5f5;
 }
 
 /* Bottom Gap */
 .bottomGap {
   width: 100%;
   height: 56px;
-  background-color: #f8f9fa;
-  border: 1px dashed #6c757d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-/* Area Labels */
-.areaLabel {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  z-index: 10;
-}
-
-.gapLabel {
-  background-color: rgba(108, 117, 125, 0.8);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: bold;
+  background-color: var(--color-background);
 }
 
 /* Responsive adjustments */
@@ -146,6 +380,19 @@
   
   .headerContent {
     height: 60px;
+    padding: 0 16px;
+  }
+  
+  .navigation {
+    gap: 4px;
+  }
+  
+  .tab {
+    padding: 6px 12px;
+  }
+  
+  .tabText {
+    font-size: 14px;
   }
   
   .banner {
@@ -153,11 +400,39 @@
   }
   
   .apiSection {
-    height: 150px;
+    min-height: 150px;
   }
   
   .apiContent {
-    height: 150px;
+    padding: 16px;
+  }
+  
+  .apiTitle {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  
+  .apiCards {
+    gap: 12px;
+  }
+  
+  .tripTalkCard {
+    min-width: 250px;
+    height: 120px;
+  }
+  
+  .cardImage {
+    width: 80px;
+    height: 120px;
+  }
+  
+  .cardContent {
+    padding: 12px;
+  }
+  
+  .cardTitle {
+    font-size: 14px;
+    line-height: 20px;
   }
   
   .mainContent {
@@ -165,16 +440,6 @@
   }
   
   .mainContentWrapper {
-    min-height: 600px;
-  }
-  
-  .areaLabel {
-    font-size: 10px;
-    padding: 2px 6px;
-  }
-  
-  .gapLabel {
-    font-size: 10px;
-    padding: 1px 4px;
+    padding: 16px;
   }
 }
