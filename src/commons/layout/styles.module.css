@@ -107,6 +107,9 @@
   padding: 8px 16px;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .loginButton:hover {
@@ -120,28 +123,51 @@
   line-height: 20px;
 }
 
+.loginIcon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1);
+}
+
 /* Banner */
 .banner {
   width: 100%;
   height: 516px;
   position: relative;
   overflow: hidden;
+  outline: none;
 }
 
-.bannerImage {
+.bannerContainer {
   width: 100%;
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
-.bannerImage img {
-  object-fit: cover;
+.bannerTrack {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.bannerSlide {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  position: relative;
 }
 
 .bannerImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 70%;
+}
+
+.bannerImgFirst {
+  object-position: center bottom;
 }
 
 .bannerIndicators {
@@ -150,8 +176,9 @@
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  gap: 12px;
   z-index: 10;
+  align-items: center;
 }
 
 .indicator {
@@ -160,13 +187,22 @@
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  border: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.indicator:hover {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
 }
 
 .indicator.active {
-  background-color: var(--color-background);
-  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 50%;
   width: 8px;
+  height: 8px;
 }
 
 .bannerArrow {
@@ -184,10 +220,21 @@
   justify-content: center;
   z-index: 10;
   transition: all 0.2s ease;
+  opacity: 0;
+}
+
+.banner:hover .bannerArrow {
+  opacity: 1;
 }
 
 .bannerArrow:hover {
   background-color: rgba(0, 0, 0, 0.5);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.bannerArrow:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
 }
 
 .leftArrow {
@@ -420,6 +467,35 @@
   
   .banner {
     height: 300px;
+  }
+  
+  .bannerArrow {
+    width: 32px;
+    height: 32px;
+    opacity: 1;
+  }
+  
+  .leftArrow {
+    left: 12px;
+  }
+  
+  .rightArrow {
+    right: 12px;
+  }
+  
+  .bannerIndicators {
+    bottom: 12px;
+    gap: 8px;
+  }
+  
+  .indicator {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .indicator.active {
+    width: 6px;
+    height: 6px;
   }
   
   .apiSection {

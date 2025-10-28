@@ -1,0 +1,66 @@
+
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @04-func.mdc
+
+==============================================
+
+조건-피그마) 활용할MCP: CursorTalkToFigmaMCP(채널명: plze4jj8)
+조건-피그마) 구현될 컴포넌트 노드ID(헤더와 캐러셀의 모습): 285:33450
+
+조건-파일경로) 참고할 TSX  파일경로: src/commons/layout/index.tsx
+조건-파일경로) 참고할 CSS  파일경로: src/commons/layout/styles.module.css
+조건-파일경로) 구현될 HOOK 파일경로: src/commons/layout/hooks/index.banner.carousel.hook.ts
+조건-파일경로) 구현될 TEST 파일경로: src/commons/layout/tests/index.banner.carousel.hook.spec.ts
+
+==============================================
+
+핵심요구사항) 배너 캐러셀 기능을 구현할 것.
+            1) 기본 기능
+                - 인디케이터(점) 클릭으로 특정 슬라이드로 이동 (점 4개)
+                - 자동 재생 기능
+                - 무한 루프 (마지막 슬라이드에서 첫 번째로, 첫 번째에서 마지막으로)
+
+            2) 사용자 경험
+                - 부드러운 전환 애니메이션 (CSS transition 활용)
+                - 터치/스와이프 지원 (모바일 디바이스)
+                - 자동 재생 중 사용자 상호작용 시 일시 정지
+                - 접근성 고려 (키보드 네비게이션, ARIA 속성)
+
+            3) 이미지 데이터
+                - 현재 사용 중인 이미지: /images/Tranquil Beachfront with White Loungers and Orange Umbrellas 1.jpg
+                - 추가 이미지: /images/Tranquil Beachfront with White Loungers and Orange Umbrellas 2.jpg, 3.jpg
+                - 이미지 배열로 관리하여 동적으로 렌더링
+
+핵심요구사항) 다음의 기능을 playwright 테스트를 활용하여 TDD기반으로 구현할 것.
+            1) 테스트 제외 라이브러리
+                - jest
+                - @testing-library/react
+
+            2) 테스트 조건
+                - timeout은 설정하지 않거나, 500ms 미만으로 설정할 것.
+                - 페이지가 완전히 로드된 후 테스트할 것.
+                    - 페이지 로드 식별 요구사항: 고정식별자 data-testid 대기 방법
+                    - 페이지 로드 식별 금지사항: networkidle 대기 방법
+
+            3) 테스트 시나리오
+                - 좌우 화살표 버튼 클릭 테스트
+                - 인디케이터 클릭 테스트
+                - 자동 재생 기능 테스트
+                - 터치/스와이프 제스처 테스트 (모바일)
+
+핵심요구사항) 기존 디자인 시스템과 일관성 유지할 것.
+            1) CSS 스타일
+                - 기존 styles.module.css의 배너 관련 클래스 활용
+                - 새로운 클래스는 기존 네이밍 컨벤션 따를 것
+                - 반응형 디자인 고려 (모바일, 태블릿, 데스크톱)
+
+            3) 상태 관리
+                - 현재 활성 슬라이드 인덱스 관리
+                - 자동 재생 상태 관리
+                - 터치 제스처 상태 관리
