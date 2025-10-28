@@ -1,7 +1,5 @@
+import TripPostsNew from '@/components/tripposts-new';
+
 export default function NewTripPostPage() {
-  return (
-    <div>
-      <h1>New Trip Post</h1>
-    </div>
-  );
+  return <TripPostsNew />;
 }

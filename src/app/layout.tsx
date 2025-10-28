@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ModalProvider } from "@/commons/providers/modal/modal.provider";
 import { ReactQueryProvider } from "@/commons/providers/react-query/react-query.provider";
+import { ApolloProviderWrapper } from "@/commons/providers/apollo/apollo.provider";
 import Layout from "@/commons/layout";
 
 const geistSans = localFont({
@@ -31,13 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ReactQueryProvider>
-          <ModalProvider>
-            <Layout>
-              {children}
-            </Layout>
-          </ModalProvider>
-        </ReactQueryProvider>
+        <ApolloProviderWrapper>
+          <ReactQueryProvider>
+            <ModalProvider>
+              <Layout>
+                {children}
+              </Layout>
+            </ModalProvider>
+          </ReactQueryProvider>
+        </ApolloProviderWrapper>
       </body>
     </html>
   );

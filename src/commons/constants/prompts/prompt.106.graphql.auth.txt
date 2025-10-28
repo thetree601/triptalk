@@ -1,0 +1,42 @@
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @02-graphql.mdc
+
+==============================================
+
+조건-파일경로) 구현될 쿼리 파일경로: src/lib/graphql/queries/auth.ts
+조건-파일경로) 구현될 뮤테이션 파일경로: src/lib/graphql/mutations/auth.ts
+조건-파일경로) 구현될 타입 파일경로: src/lib/graphql/types/auth.ts
+
+==============================================
+
+핵심요구사항) 인증 관련 GraphQL 쿼리와 뮤테이션을 구현할 것.
+            1. 쿼리 (auth.ts):
+                - fetchUserLoggedIn: 로그인된 사용자 정보 조회
+                - 사용자 ID, 이름, 이메일 정보 반환
+                
+            2. 뮤테이션 (auth.ts):
+                - loginUser: 로그인 (email, password)
+                - createUser: 회원가입 (email, password, name)
+                - 응답으로 accessToken 또는 사용자 ID 반환
+                
+            3. 타입 정의 (auth.ts):
+                - User 타입: _id, name, email
+                - LoginInput 타입: email, password
+                - CreateUserInput 타입: email, password, name
+                - LoginResponse 타입: accessToken
+                - CreateUserResponse 타입: _id
+                
+            4. GraphQL 문서:
+                - gql 템플릿 리터럴 사용
+                - 변수 타입 정의
+                - 반환 타입 정의
+                
+            5. 에러 처리:
+                - GraphQL 에러 타입 정의
+                - 네트워크 에러 처리

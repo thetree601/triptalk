@@ -1,0 +1,62 @@
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @02-graphql.mdc
+
+==============================================
+
+조건-파일경로) 구현될 쿼리 파일경로: src/lib/graphql/queries/boards.ts
+조건-파일경로) 구현될 타입 파일경로: src/lib/graphql/types/boards.ts
+
+==============================================
+
+핵심요구사항) 메인페이지용 Board 관련 GraphQL 쿼리를 구현할 것.
+
+            1. 쿼리 (boards.ts):
+                1-1) fetchBoardsOfTheBest: 오늘 핫한 게시글 조회
+                    - 반환: [Board!]!
+                    - 설명: 인기 게시글 목록
+                    
+                1-2) fetchBoards: 게시글 목록 조회 (페이지네이션)
+                    - 매개변수:
+                        - endDate: DateTime (선택)
+                        - startDate: DateTime (선택) 
+                        - search: String (선택)
+                        - page: Int (선택)
+                    - 반환: [Board!]!
+                    - 설명: 일반 게시글 목록 (검색, 날짜 필터, 페이지네이션 지원)
+
+            2. Board 타입 정의 (boards.ts):
+                - _id: ID! (필수)
+                - writer: String (선택)
+                - title: String! (필수)
+                - contents: String! (필수)
+                - youtubeUrl: String (선택)
+                - likeCount: Int! (필수)
+                - dislikeCount: Int! (필수)
+                - images: [String!] (선택, 문자열 배열)
+                - boardAddress: BoardAddress (선택)
+                - user: User (선택)
+                - createdAt: DateTime! (필수)
+                - updatedAt: DateTime! (필수)
+                - deletedAt: DateTime (선택)
+
+            3. GraphQL 문서:
+                - gql 템플릿 리터럴 사용
+                - 실제 스키마에 맞는 쿼리 작성
+                - 변수 타입 정의 (fetchBoards용)
+                - 반환 타입 정의
+
+            4. 메인페이지 사용:
+                - fetchBoardsOfTheBest: 상단 핫한 게시글 섹션
+                - fetchBoards: 하단 일반 게시글 목록 섹션
+                - 페이지네이션 지원 (page 매개변수 활용)
+
+            5. 에러 처리:
+                - GraphQL 에러 타입 정의
+                - 네트워크 에러 처리
+                - 빈 데이터 처리
