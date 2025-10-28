@@ -261,7 +261,7 @@
 /* API Section */
 .apiSection {
   width: 100%;
-  min-height: 212px;
+  height: 212px;
   display: flex;
   justify-content: center;
   background-color: var(--color-background);
@@ -270,7 +270,6 @@
 
 .apiContent {
   width: 1280px;
-  padding: 20px;
   position: relative;
 }
 
@@ -413,7 +412,6 @@
 
 .mainContentWrapper {
   width: 1280px;
-  padding: 20px;
   position: relative;
 }
 
