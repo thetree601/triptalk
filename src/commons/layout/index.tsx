@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useBannerCarousel, BannerImage } from './hooks/index.banner.carousel.hook';
 import { usePathname } from 'next/navigation';
 import { URL_UTILS, URL_PATHS } from '@/commons/constants/url';
+import Link from 'next/link';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -90,7 +91,7 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* User Actions */}
           <div className={styles.userActions}>
-            <button className={styles.loginButton}>
+            <Link href={URL_PATHS.LOGIN} className={styles.loginButton}>
               <span className={styles.loginText}>로그인</span>
               <Image 
                 src="/icons/right_icon.png" 
@@ -99,7 +100,7 @@ export default function Layout({ children }: LayoutProps) {
                 height={16}
                 className={styles.loginIcon}
               />
-            </button>
+            </Link>
           </div>
         </div>
       </header>

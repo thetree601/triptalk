@@ -1,5 +1,6 @@
 import styles from './styles.module.css';
 import Image from 'next/image';
+import Link from 'next/link';
 
 // Hot Post 타입 정의
 interface HotPost {
@@ -183,7 +184,7 @@ export default function TripPosts(): JSX.Element {
               </button>
             </div>
             
-            <button className={styles.registerButton}>
+            <Link href="/tripposts/new" className={styles.registerButton}>
               <Image 
                 src="/icons/write.png" 
                 alt="등록" 
@@ -192,7 +193,7 @@ export default function TripPosts(): JSX.Element {
                 className={styles.registerButtonIcon}
               />
               <span className={styles.registerButtonText}>트립토크 등록</span>
-            </button>
+            </Link>
           </div>
         </div>
 

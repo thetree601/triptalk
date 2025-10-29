@@ -1,5 +1,5 @@
-import TripPosts from '@/components/tripposts';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  return <TripPosts />;
+  redirect('/tripposts');
 }
