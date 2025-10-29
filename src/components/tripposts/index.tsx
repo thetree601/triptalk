@@ -1,6 +1,10 @@
+"use client";
 import styles from './styles.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useQuery } from '@apollo/client/react';
+import { FETCH_BOARDS_OF_THE_BEST, FETCH_BOARDS, type FetchBoardsOfTheBestResponse, type FetchBoardsResponse, type FetchBoardsVariables } from '@/lib/graphql/queries/boards';
+import type { Board } from '@/lib/apollo/client';
 
 // Hot Post 타입 정의
 interface HotPost {
@@ -22,55 +26,47 @@ interface BoardPost {
 }
 
 export default function TripPosts(): JSX.Element {
-  // 핫한 트립토크 더미 데이터
-  const hotPosts: HotPost[] = [
-    {
-      id: '1',
-      title: '제주 살이 1일차 청산별곡이 생각나네요',
-      writer: '홍길동',
-      likeCount: 24,
-      date: '2024.11.11',
-      imageUrl: '/images/Tranquil Beachfront with White Loungers and Orange Umbrellas 1.png'
-    },
-    {
-      id: '2',
-      title: '길 걷고 있었는데 고양이한테 간택 받았어요',
-      writer: '홍길동',
-      likeCount: 24,
-      date: '2024.11.11',
-      imageUrl: '/images/Tranquil Beachfront with White Loungers and Orange Umbrellas 2.png'
-    },
-    {
-      id: '3',
-      title: '강릉 여름바다 보기 좋네요 서핑하고 싶어요!',
-      writer: '홍길동',
-      likeCount: 24,
-      date: '2024.11.11',
-      imageUrl: '/images/Tranquil Beachfront with White Loungers and Orange Umbrellas 3.png'
-    },
-    {
-      id: '4',
-      title: '누가 양양 핫하다고 했어 나밖에 없는데?',
-      writer: '홍길동',
-      likeCount: 24,
-      date: '2024.11.11',
-      imageUrl: '/images/Tranquil Beachfront with White Loungers and Orange Umbrellas 1.png'
-    }
-  ];
+  // 날짜 포맷터
+  const formatDate = (iso?: string) => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}.${mm}.${dd}`;
+  };
 
-  // 게시판 더미 데이터
-  const boardPosts: BoardPost[] = [
-    { id: '1', number: '243', title: '제주 살이 1일차', writer: '홍길동', date: '2024.12.16' },
-    { id: '2', number: '242', title: '강남 살이 100년차', writer: '홍길동', date: '2024.12.16' },
-    { id: '3', number: '241', title: '길 걷고 있었는데 고양이한테 간택 받았어요', writer: '홍길동', date: '2024.12.16' },
-    { id: '4', number: '240', title: '오늘 날씨 너무 좋아서 바다보러 왔어요~', writer: '홍길동', date: '2024.12.16' },
-    { id: '5', number: '239', title: '누가 양양 핫하다고 했어 나밖에 없는데?', writer: '홍길동', date: '2024.12.16' },
-    { id: '6', number: '238', title: '여름에 보드타고 싶은거 저밖에 없나요 🥲', writer: '홍길동', date: '2024.12.16' },
-    { id: '7', number: '237', title: '사무실에서 과자 너무 많이 먹은거 같아요 다이어트하러 여행 가야겠어요', writer: '홍길동', date: '2024.12.16' },
-    { id: '8', number: '236', title: '여기는 기승전 여행이네요 ㅋㅋㅋ', writer: '홍길동', date: '2024.12.16' },
-    { id: '9', number: '235', title: '상여금 들어왔는데 이걸로 다낭갈까 사이판 갈까', writer: '홍길동', date: '2024.12.16' },
-    { id: '10', number: '234', title: '강릉 여름바다 보기 좋네요', writer: '홍길동', date: '2024.12.16' }
-  ];
+  // 이미지 URL 정규화 (Next/Image 요구사항 충족)
+  const normalizeImageUrl = (raw?: string) => {
+    if (!raw) return '/images/Tranquil Beachfront with White Loungers and Orange Umbrellas 1.png';
+    if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+    if (raw.startsWith('/')) return raw;
+    if (raw.startsWith('codecamp-file-storage/')) {
+      return `https://storage.googleapis.com/${raw}`;
+    }
+    return '/images/Tranquil Beachfront with White Loungers and Orange Umbrellas 1.png';
+  };
+
+  // GraphQL: 오늘 핫한 트립토크
+  const { data: bestData } = useQuery<FetchBoardsOfTheBestResponse>(FETCH_BOARDS_OF_THE_BEST);
+  const hotPosts: HotPost[] = (bestData?.fetchBoardsOfTheBest ?? []).map((b: Board) => ({
+    id: b._id,
+    title: b.title,
+    writer: b.writer ?? (b.user?.name ?? ''),
+    likeCount: b.likeCount ?? 0,
+    date: formatDate(b.createdAt),
+    imageUrl: normalizeImageUrl(Array.isArray(b.images) ? b.images[0] : undefined)
+  }));
+
+  // GraphQL: 게시판 목록 (기본 1페이지)
+  const { data: boardsData } = useQuery<FetchBoardsResponse, FetchBoardsVariables>(FETCH_BOARDS, { variables: { page: 1 } });
+  const boardPosts: BoardPost[] = (boardsData?.fetchBoards ?? []).map((b: Board, idx: number) => ({
+    id: b._id,
+    number: String(idx + 1),
+    title: b.title,
+    writer: b.writer ?? (b.user?.name ?? ''),
+    date: formatDate(b.createdAt)
+  }));
 
   // 페이지네이션 상태 (데모용)
   const totalPages = 5;

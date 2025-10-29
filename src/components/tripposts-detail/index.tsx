@@ -68,7 +68,7 @@ export default function TripPostDetail({ }: TripPostDetailProps) {
       </article>
 
       <div className={styles.videoThumbnail}>
-        <Image src="/images/youtube.png" alt="video thumbnail" fill className={styles.videoThumbnailImage} />
+        <Image src="/images/youtube.png" alt="video thumbnail" width={822} height={464} className={styles.videoThumbnailImage} />
         <Image src="/icons/playbutton.png" alt="play" width={56} height={56} className={styles.videoPlayButton} />
       </div>
 
@@ -85,12 +85,12 @@ export default function TripPostDetail({ }: TripPostDetailProps) {
 
       <div className={styles.actionRow}>
         <button className={styles.outlineButton}>
-          <Image src="/icons/return.png" alt="list" width={20} height={20} />
-          <span>목록으로</span>
+          <Image src="/icons/menu.png" alt="list" width={20} height={20} />
+          <span className={styles.outlineButtonText}>목록으로</span>
         </button>
         <button className={styles.outlineButton}>
           <Image src="/icons/edit.png" alt="edit" width={20} height={20} />
-          <span>수정하기</span>
+          <span className={styles.outlineButtonText}>수정하기</span>
         </button>
       </div>
 
@@ -102,11 +102,11 @@ export default function TripPostDetail({ }: TripPostDetailProps) {
           <h2 className={styles.commentsTitle}>댓글</h2>
         </div>
         <div className={styles.ratingRow}>
-          <Image src="/icons/star_bright.png" alt="star" width={20} height={20} />
-          <Image src="/icons/star_bright.png" alt="star" width={20} height={20} />
-          <Image src="/icons/star_bright.png" alt="star" width={20} height={20} />
-          <Image src="/icons/star_bright.png" alt="star" width={20} height={20} />
-          <Image src="/icons/star_bright.png" alt="star" width={20} height={20} />
+          <Image src="/icons/star.png" alt="star" width={24} height={24} />
+          <Image src="/icons/star.png" alt="star" width={24} height={24} />
+          <Image src="/icons/star.png" alt="star" width={24} height={24} />
+          <Image src="/icons/star.png" alt="star" width={24} height={24} />
+          <Image src="/icons/star.png" alt="star" width={24} height={24} />
         </div>
         <div className={styles.commentInputWrapper}>
           <textarea className={styles.commentInput} placeholder="댓글을 입력해 주세요." maxLength={100} />
@@ -124,7 +124,6 @@ export default function TripPostDetail({ }: TripPostDetailProps) {
               <div className={styles.commentMeta}>
                 <div className={styles.commentTopRow}>
                   <span className={styles.commentName}>김코딩</span>
-                  <span className={styles.commentDate}>2024.11.11</span>
                 </div>
                 <div className={styles.commentStars}>
                   <Image src="/icons/star_bright.png" alt="star" width={16} height={16} />
@@ -135,8 +134,14 @@ export default function TripPostDetail({ }: TripPostDetailProps) {
                 </div>
               </div>
             </div>
-            <p className={styles.commentText}>사진이 정말 멋져요! 다음 여행이 기대됩니다.</p>
+            <p className={styles.commentText}>사진이 정말 멋져요! 다음 여행이 기대됩니다.
+다음 일정도 공유해 주세요.
+멋진 후기 기다릴게요!</p>
+            <div className={styles.commentFooter}>
+              <span className={styles.commentDateBottom}>2024.11.11</span>
+            </div>
           </li>
+          <div className={styles.commentSeparator} />
           <li className={styles.commentItem}>
             <div className={styles.commentHeader}>
               <div className={styles.commentProfileImage}>
@@ -145,7 +150,6 @@ export default function TripPostDetail({ }: TripPostDetailProps) {
               <div className={styles.commentMeta}>
                 <div className={styles.commentTopRow}>
                   <span className={styles.commentName}>이디자인</span>
-                  <span className={styles.commentDate}>2024.11.09</span>
                 </div>
                 <div className={styles.commentStars}>
                   <Image src="/icons/star_bright.png" alt="star" width={16} height={16} />
@@ -156,7 +160,38 @@ export default function TripPostDetail({ }: TripPostDetailProps) {
                 </div>
               </div>
             </div>
-            <p className={styles.commentText}>정보가 자세해서 도움이 많이 되었어요. 감사합니다!</p>
+            <p className={styles.commentText}>정보가 자세해서 도움이 많이 되었어요. 감사합니다!
+후속 글도 기대하고 있을게요.
+유익한 정보 고마워요.</p>
+            <div className={styles.commentFooter}>
+              <span className={styles.commentDateBottom}>2024.11.09</span>
+            </div>
+          </li>
+          <div className={styles.commentSeparator} />
+          <li className={styles.commentItem}>
+            <div className={styles.commentHeader}>
+              <div className={styles.commentProfileImage}>
+                <Image src="/icons/person.png" alt="user" width={32} height={32} />
+              </div>
+              <div className={styles.commentMeta}>
+                <div className={styles.commentTopRow}>
+                  <span className={styles.commentName}>박여행</span>
+                </div>
+                <div className={styles.commentStars}>
+                  <Image src="/icons/star_bright.png" alt="star" width={16} height={16} />
+                  <Image src="/icons/star_bright.png" alt="star" width={16} height={16} />
+                  <Image src="/icons/star_bright.png" alt="star" width={16} height={16} />
+                  <Image src="/icons/star.png" alt="star" width={16} height={16} />
+                  <Image src="/icons/star.png" alt="star" width={16} height={16} />
+                </div>
+              </div>
+            </div>
+            <p className={styles.commentText}>사진과 글이 조화롭네요.
+설명 덕분에 참고가 많이 됐어요.
+좋은 하루 보내세요!</p>
+            <div className={styles.commentFooter}>
+              <span className={styles.commentDateBottom}>2024.11.07</span>
+            </div>
           </li>
         </ul>
       </section>

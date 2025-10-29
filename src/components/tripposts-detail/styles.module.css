@@ -27,38 +27,40 @@
 
 .divider { height: 1px; background: #e4e4e4; }
 
-.iconRow { display: flex; align-items: center; gap: 8px; height: 24px; margin: 16px 0; }
+.iconRow { display: flex; align-items: center; justify-content: flex-end; gap: 8px; height: 24px; margin: 16px 0; }
 
 .heroImageWrapper { margin-top: 24px; }
 .heroImage { object-fit: cover; }
 
 .contentText { white-space: pre-wrap; font-size: 16px; line-height: 24px; margin-top: 24px; }
 
-.videoThumbnail { margin-top: 24px; background: #f2f2f2; height: 512px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: 8px; }
-.videoThumbnailImage { width: 100%; height: 100%; object-fit: cover; }
+.videoThumbnail { margin: 24px auto 0; background: var(--color-background-secondary); height: 512px; max-width: 1280px; width: 100%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.videoThumbnailImage { width: 822px; height: 464px; object-fit: cover; }
 .videoPlayButton { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3)); }
 
 .reactionsRow { display: flex; align-items: center; justify-content: center; gap: 24px; height: 48px; margin-top: 24px; }
-.badArea, .goodArea { display: flex; align-items: center; gap: 4px; }
+.badArea, .goodArea { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .badCount { color: #5f5f5f; font-size: 14px; }
 .goodCount { color: #f66a6a; font-size: 14px; }
 
-.actionRow { display: flex; align-items: center; justify-content: center; gap: 16px; height: 40px; margin-top: 16px; }
-.outlineButton { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid #000; border-radius: 8px; background: #fff; }
+.actionRow { display: flex; align-items: center; justify-content: center; gap: 16px; height: 40px; margin-top: 16px; margin-bottom: 24px; }
+.outlineButton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 105px; height: 40px; padding: 0; border: 1px solid #000; border-radius: 8px; background: #fff; }
+.outlineButtonText { font-family: var(--typography-regular-font-family); font-size: var(--typography-small-font-size); font-weight: var(--font-weight-semiBold); line-height: var(--typography-small-line-height); color: var(--color-text-primary); letter-spacing: 0; }
 
 .commentsSection { margin-top: 40px; }
 .commentsHeader { display: flex; align-items: center; gap: 8px; height: 24px; }
 .commentsTitle { font-size: 16px; font-weight: 600; }
-.ratingRow { display: flex; align-items: center; gap: 8px; height: 24px; margin-top: 12px; }
-.commentInputWrapper { margin-top: 16px; position: relative; }
-.commentInput { width: 100%; height: 144px; border: 1px solid #d4d3d3; border-radius: 8px; padding: 16px; color: #000; }
+.ratingRow { display: flex; align-items: center; gap: 8px; height: 24px; margin-top: 24px; }
+.commentInputWrapper { margin-top: 24px; position: relative; }
+.commentInput { width: 100%; height: 144px; border: 1px solid #d4d3d3; border-radius: 8px; padding: 16px; color: #000; resize: none; }
 .commentCount { position: absolute; right: 16px; bottom: 12px; color: #ababab; font-weight: 500; }
 .commentActions { display: flex; justify-content: flex-end; margin-top: 16px; }
-.primaryButton { height: 48px; padding: 0 16px; background: #000; color: #fff; border-radius: 8px; }
+.primaryButton { width: 99px; height: 48px; padding: 0; background: #000; color: #fff; border-radius: 8px; font-family: var(--typography-regular-font-family); font-size: var(--typography-regular-font-size); font-weight: var(--typography-regular-font-weight); line-height: var(--typography-regular-line-height); }
 .noComments { text-align: center; color: #777; font-size: 14px; margin-top: 16px; }
 
-.commentList { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
-.commentItem { padding: 16px 0; border-top: 1px solid #f0f0f0; }
+.commentList { margin-top: 24px; display: flex; flex-direction: column; gap: 0; }
+.commentItem { padding: 0; }
+.commentSeparator { height: 1px; background: #f0f0f0; margin: 40px 0; }
 .commentHeader { display: flex; align-items: center; gap: 12px; }
 .commentProfileImage { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
 .commentMeta { display: flex; flex-direction: column; gap: 4px; }
@@ -67,6 +69,8 @@
 .commentDate { font-size: 12px; color: #9a9a9a; }
 .commentStars { display: flex; align-items: center; gap: 4px; }
 .commentText { margin-top: 8px; font-size: 14px; line-height: 20px; color: #333; }
+.commentFooter { margin-top: 8px; }
+.commentDateBottom { font-size: 12px; color: #9a9a9a; }
 
 .bottomGap { height: 40px; }
 

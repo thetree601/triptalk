@@ -55,7 +55,7 @@
 
 .hotCardContent {
   flex: 1;
-  padding: 0 12px;
+  padding: 0 0 0 8px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
