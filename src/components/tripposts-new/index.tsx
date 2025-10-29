@@ -15,7 +15,7 @@ export default function TripPostsNew() {
 
       <div className={styles.frame}>
         <header className={styles.header}>
-          <h1 id="newPostHeading" className="typography-h1">게시물 등록</h1>
+          <h1 id="newPostHeading">게시물 등록</h1>
         </header>
 
         <form className={styles.form} onSubmit={onSubmit}>
@@ -93,7 +93,6 @@ export default function TripPostsNew() {
             <div className={styles.fieldNarrow}>
               <div className={styles.labelRow}>
                 <label htmlFor="zipcode" className={styles.label}>주소</label>
-                <span className={styles.requiredMark} aria-hidden>*</span>
               </div>
               <input
                 id="zipcode"
@@ -103,7 +102,7 @@ export default function TripPostsNew() {
                 required
               />
             </div>
-            <button type="button" className={`${styles.button} ${styles.secondary}`}>
+            <button type="button" className={`${styles.button} ${styles.secondary} ${styles.searchButton}`}>
               우편번호 검색
             </button>
           </div>
@@ -133,7 +132,6 @@ export default function TripPostsNew() {
         <div className={styles.field}>
           <div className={styles.labelRow}>
             <label htmlFor="youtube" className={styles.label}>유튜브 링크</label>
-            <span className={styles.requiredMark} aria-hidden>*</span>
           </div>
           <input
             id="youtube"
@@ -149,19 +147,18 @@ export default function TripPostsNew() {
         <div className={styles.field}>
           <div className={styles.labelRow}>
             <label className={styles.label}>사진 첨부</label>
-            <span className={styles.requiredMark} aria-hidden>*</span>
           </div>
           <div className={styles.imageGrid}>
             <button type="button" className={styles.imageTile} aria-label="클릭해서 사진 업로드">
-              <div className={styles.addIcon} />
+              <img src="/icons/add.png" alt="추가" className={styles.addIcon} />
               <span className={styles.tileText}>클릭해서 사진 업로드</span>
             </button>
             <button type="button" className={styles.imageTile} aria-label="클릭해서 사진 업로드">
-              <div className={styles.addIcon} />
+              <img src="/icons/add.png" alt="추가" className={styles.addIcon} />
               <span className={styles.tileText}>클릭해서 사진 업로드</span>
             </button>
             <button type="button" className={styles.imageTile} aria-label="클릭해서 사진 업로드">
-              <div className={styles.addIcon} />
+              <img src="/icons/add.png" alt="추가" className={styles.addIcon} />
               <span className={styles.tileText}>클릭해서 사진 업로드</span>
             </button>
           </div>

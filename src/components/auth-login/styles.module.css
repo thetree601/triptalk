@@ -1,0 +1,173 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-background);
+  z-index: 9999;
+}
+
+.loginForm {
+  width: 400px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  background-color: var(--color-background);
+}
+
+.logoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.logoContainer {
+  margin-bottom: 24px;
+}
+
+.welcomeTitle {
+  font-family: var(--font-family-korean-primary);
+  font-size: 18px;
+  font-weight: var(--font-weight-semiBold);
+  line-height: 24px;
+  color: var(--color-text-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.formSection {
+  width: 100%;
+  max-width: 320px;
+}
+
+.loginSubtitle {
+  font-family: var(--font-family-korean-primary);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: 0 0 16px 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.inputGroup {
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  padding: 10px 16px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+  outline: none;
+  font-family: var(--font-family-korean-primary);
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  line-height: 20px;
+  color: var(--color-text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--color-border-focus);
+}
+
+.input::placeholder {
+  color: var(--color-text-disabled);
+}
+
+.loginButton {
+  width: 100%;
+  height: 48px;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-inverse);
+  font-family: var(--font-family-korean-primary);
+  font-size: 18px;
+  font-weight: var(--font-weight-semiBold);
+  line-height: 24px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.loginButton:active {
+  background-color: var(--color-primary-active);
+}
+
+.signupSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signupLink {
+  font-family: var(--font-family-korean-primary);
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.signupLink:hover {
+  color: var(--color-primary);
+}
+
+.backgroundImage {
+  flex: 1;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .loginForm {
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .backgroundImage {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .loginForm {
+    padding: 16px;
+  }
+  
+  .formSection {
+    max-width: 100%;
+  }
+}
