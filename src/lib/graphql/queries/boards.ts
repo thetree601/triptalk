@@ -79,3 +79,32 @@ export type {
   FetchBoardsVariables, 
   FetchBoardsOfTheBestResponse 
 };
+
+// 게시글 단건 조회 쿼리
+export const FETCH_BOARD = gql`
+  query FetchBoard($boardId: ID!) {
+    fetchBoard(boardId: $boardId) {
+      _id
+      writer
+      title
+      contents
+      youtubeUrl
+      images
+      likeCount
+      dislikeCount
+      createdAt
+      boardAddress {
+        zipcode
+        address
+        addressDetail
+      }
+    }
+  }
+`;
+
+// 게시글 총 개수 조회 쿼리
+export const FETCH_BOARDS_COUNT = gql`
+  query FetchBoardsCount($endDate: DateTime, $startDate: DateTime, $search: String) {
+    fetchBoardsCount(endDate: $endDate, startDate: $startDate, search: $search)
+  }
+`;

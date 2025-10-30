@@ -42,12 +42,40 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     setContent(null);
   };
 
+  // debug helper removed per request
+
   const ModalPortal = () => {
     if (!isOpen || !content) return null;
     
     return createPortal(
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="relative">
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 2147483646,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          pointerEvents: 'auto',
+        }}
+        aria-modal={true as unknown as undefined}
+        role="dialog"
+      >
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2147483647,
+            backgroundColor: '#ffffff',
+            borderRadius: 8,
+            padding: 24,
+            maxWidth: 480,
+            width: '100%',
+            marginLeft: 16,
+            marginRight: 16,
+            boxShadow: '0 10px 25px rgba(0,0,0,0.25)'
+          }}
+        >
           {content}
         </div>
       </div>,

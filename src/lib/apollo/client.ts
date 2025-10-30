@@ -34,8 +34,9 @@ const cache = new InMemoryCache({
         // 페이지네이션 캐시 정책
         fetchBoards: {
           keyArgs: ['page', 'search', 'startDate', 'endDate'],
-          merge(existing = [], incoming) {
-            return [...existing, ...incoming];
+          // 동일한 페이지 요청 시 항상 서버 응답으로 교체하여 중복 누적 방지
+          merge(existing, incoming) {
+            return incoming;
           },
         },
         // 인기 게시글 캐시 정책

@@ -899,3 +899,47 @@
 807 http fetch GET 200 https://registry.npmjs.org/ajv/-/ajv-6.12.6.tgz 372ms (cache miss)
 808 http fetch GET 200 https://registry.npmjs.org/zod/-/zod-3.25.76.tgz 408ms (cache miss)
 809 http fetch GET 200 https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.13.1.tgz 844ms (cache miss)
+810 verbose stack Error: kill EPERM
+810 verbose stack     at ChildProcess.kill (node:internal/child_process:511:26)
+810 verbose stack     at process.handleSignal (/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/signal-manager.js:14:10)
+810 verbose stack     at process.emit (node:events:519:28)
+811 verbose pkgid triptalk@0.1.0
+812 error code EPERM
+813 error syscall kill
+814 error path /Users/sohee/Documents/triptalk
+815 error errno -1
+816 error Error: kill EPERM
+816 error     at ChildProcess.kill (node:internal/child_process:511:26)
+816 error     at process.handleSignal (/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/signal-manager.js:14:10)
+816 error     at process.emit (node:events:519:28) {
+816 error   errno: -1,
+816 error   code: 'EPERM',
+816 error   syscall: 'kill',
+816 error   cmd: 'sh',
+816 error   args: [ '-c', 'cursor-talk-to-figma-socket' ],
+816 error   stdout: null,
+816 error   stderr: null,
+816 error   event: 'npx',
+816 error   script: 'cursor-talk-to-figma-socket',
+816 error   pkgid: 'triptalk@0.1.0',
+816 error   path: '/Users/sohee/Documents/triptalk'
+816 error }
+817 error
+817 error The operation was rejected by your operating system.
+817 error It is likely you do not have the permissions to access this file as the current user
+817 error
+817 error If you believe this might be a permissions issue, please double-check the
+817 error permissions of the file and its containing directories, or try running
+817 error the command again as root/Administrator.
+818 verbose cwd /Users/sohee/Documents/triptalk
+819 verbose os Darwin 24.6.0
+820 verbose node v22.19.0
+821 verbose npm  v10.9.3
+822 notice
+822 notice New major version of npm available! 10.9.3 -> 11.6.2
+822 notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+822 notice To update run: npm install -g npm@11.6.2
+822 notice  { force: true, [Symbol(proc-log.meta)]: true }
+823 verbose exit -1
+824 verbose code -1
+825 error A complete log of this run can be found in: /Users/sohee/Documents/triptalk/.npm-cache/_logs/2025-10-29T08_04_53_944Z-debug-0.log

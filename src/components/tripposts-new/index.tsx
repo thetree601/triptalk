@@ -1,13 +1,28 @@
 "use client";
 
 import React from 'react';
+import DaumPostcodeEmbed from 'react-daum-postcode';
 import styles from './styles.module.css';
+import { useTripPostNewForm } from './hooks/index.form.hook';
 
 export default function TripPostsNew() {
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    // submit logic to be implemented later
-  };
+  const {
+    register,
+    handleSubmit,
+    formState,
+    errors,
+    onSubmit,
+    isSubmitting,
+    isPostcodeOpen,
+    openPostcode,
+    closePostcode,
+    onPostcodeComplete,
+    fileInputRef,
+    previews,
+    triggerFileSelect,
+    onFilesSelected,
+    removePreviewAt,
+  } = useTripPostNewForm();
 
   return (
     <section className={styles.container} aria-labelledby="newPostHeading">
@@ -18,7 +33,7 @@ export default function TripPostsNew() {
           <h1 id="newPostHeading">게시물 등록</h1>
         </header>
 
-        <form className={styles.form} onSubmit={onSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         {/* 작성자 / 비밀번호 */}
         <div className={styles.rowTwoCols}>
           <div className={styles.field}>
@@ -28,11 +43,13 @@ export default function TripPostsNew() {
             </div>
             <input
               id="author"
-              name="author"
+              {...register('writer')}
               className={styles.input}
               placeholder="작성자 명을 입력해 주세요."
-              required
             />
+            {errors.writer?.message && (
+              <p className={styles.errorText} role="alert">{errors.writer.message as string}</p>
+            )}
           </div>
           <div className={styles.field}>
             <div className={styles.labelRow}>
@@ -42,13 +59,15 @@ export default function TripPostsNew() {
             <div className={styles.inputWithAction}>
               <input
                 id="password"
-                name="password"
+                {...register('password')}
                 type="password"
                 className={styles.input}
                 placeholder="비밀번호를 입력해 주세요."
-                required
               />
             </div>
+            {errors.password?.message && (
+              <p className={styles.errorText} role="alert">{errors.password.message as string}</p>
+            )}
           </div>
         </div>
 
@@ -62,11 +81,13 @@ export default function TripPostsNew() {
           </div>
           <input
             id="title"
-            name="title"
+            {...register('title')}
             className={styles.input}
             placeholder="제목을 입력해 주세요."
-            required
           />
+          {errors.title?.message && (
+            <p className={styles.errorText} role="alert">{errors.title.message as string}</p>
+          )}
         </div>
 
         <div className={styles.hr} aria-hidden="true" />
@@ -79,12 +100,14 @@ export default function TripPostsNew() {
           </div>
           <textarea
             id="content"
-            name="content"
+            {...register('contents')}
             className={styles.textarea}
             placeholder="내용을 입력해 주세요."
             rows={12}
-            required
           />
+          {errors.contents?.message && (
+            <p className={styles.errorText} role="alert">{errors.contents.message as string}</p>
+          )}
         </div>
 
         {/* 주소 섹션 */}
@@ -96,13 +119,12 @@ export default function TripPostsNew() {
               </div>
               <input
                 id="zipcode"
-                name="zipcode"
+                {...register('zipcode')}
                 className={styles.input}
                 placeholder="01234"
-                required
               />
             </div>
-            <button type="button" className={`${styles.button} ${styles.secondary} ${styles.searchButton}`}>
+            <button type="button" onClick={openPostcode} className={`${styles.button} ${styles.secondary} ${styles.searchButton}`}>
               우편번호 검색
             </button>
           </div>
@@ -110,20 +132,27 @@ export default function TripPostsNew() {
           <div className={styles.field}>
             <input
               id="address1"
-              name="address1"
+              {...register('address1')}
               className={styles.input}
               placeholder="주소를 입력해 주세요,"
-              required
             />
           </div>
           <div className={styles.field}>
             <input
               id="address2"
-              name="address2"
+              {...register('address2')}
               className={styles.input}
               placeholder="상세주소"
             />
           </div>
+          {isPostcodeOpen && (
+            <div className={styles.postcodeLayer} role="dialog" aria-modal="true">
+              <div className={styles.postcodeBox}>
+                <DaumPostcodeEmbed onComplete={(data) => onPostcodeComplete({ zonecode: data.zonecode, address: data.address })} />
+                <button type="button" onClick={closePostcode} className={`${styles.button} ${styles.ghost}`}>닫기</button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.hr} aria-hidden="true" />
@@ -135,10 +164,13 @@ export default function TripPostsNew() {
           </div>
           <input
             id="youtube"
-            name="youtube"
+            {...register('youtube')}
             className={styles.input}
             placeholder="링크를 입력해 주세요."
           />
+          {errors.youtube?.message && (
+            <p className={styles.errorText} role="alert">{errors.youtube.message as string}</p>
+          )}
         </div>
 
         <div className={styles.hr} aria-hidden="true" />
@@ -149,18 +181,26 @@ export default function TripPostsNew() {
             <label className={styles.label}>사진 첨부</label>
           </div>
           <div className={styles.imageGrid}>
-            <button type="button" className={styles.imageTile} aria-label="클릭해서 사진 업로드">
-              <img src="/icons/add.png" alt="추가" className={styles.addIcon} />
-              <span className={styles.tileText}>클릭해서 사진 업로드</span>
-            </button>
-            <button type="button" className={styles.imageTile} aria-label="클릭해서 사진 업로드">
-              <img src="/icons/add.png" alt="추가" className={styles.addIcon} />
-              <span className={styles.tileText}>클릭해서 사진 업로드</span>
-            </button>
-            <button type="button" className={styles.imageTile} aria-label="클릭해서 사진 업로드">
-              <img src="/icons/add.png" alt="추가" className={styles.addIcon} />
-              <span className={styles.tileText}>클릭해서 사진 업로드</span>
-            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" multiple hidden onChange={(e) => onFilesSelected(e.target.files)} />
+            {[0,1,2].map((slotIdx) => {
+              const src = previews[slotIdx];
+              if (src) {
+                return (
+                  <div key={`preview-${slotIdx}`} className={styles.imageTile} aria-label={`업로드된 이미지 ${slotIdx + 1}`}>
+                    <img src={src} alt="미리보기" className={styles.previewImg} />
+                    <button type="button" onClick={() => removePreviewAt(slotIdx)} className={styles.removeBadge} aria-label="이미지 삭제">
+                      ×
+                    </button>
+                  </div>
+                );
+              }
+              return (
+                <button key={`add-${slotIdx}`} type="button" onClick={() => triggerFileSelect(slotIdx)} className={styles.imageTile} aria-label="클릭해서 사진 업로드">
+                  <img src="/icons/add.png" alt="추가" className={styles.addIcon} />
+                  <span className={styles.tileText}>클릭해서 사진 업로드</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -169,7 +209,7 @@ export default function TripPostsNew() {
           <button type="button" className={`${styles.button} ${styles.ghost}`}>
             취소
           </button>
-          <button type="submit" className={`${styles.button} ${styles.primary}`}>
+          <button type="submit" disabled={!formState.isValid || isSubmitting} className={`${styles.button} ${styles.primary}`}>
             등록하기
           </button>
         </div>

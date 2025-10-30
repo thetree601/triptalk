@@ -1,0 +1,39 @@
+아래 요구만 구현하고, 체크리스트로 결과를 반환할 것.
+
+==============================================
+
+조건-피그마) 활용할MCP: CursorTalkToFigmaMCP(채널명: o9sndzqu)
+조건-피그마) 시안 참조: 로그인 헤더 285:32255, 드롭다운 285:33710
+
+==============================================
+
+대상/참조 파일
+- 훅 소비자: src/commons/layout/index.tsx
+- 인증: src/commons/providers/auth/auth.provider.tsx (읽기전용)
+- 드롭다운: src/commons/layout/prompts/prompt.305.ui.header.auth.dropdown.txt
+
+==============================================
+
+핵심 요구
+- 헤더 우측 버튼 영역 분기에 필요한 최소한의 값/이벤트만 제공.
+
+훅 시그니처(예시)
+- getHeaderAuthVisibility(): {
+    isAuthenticated: boolean;
+    userProfileImageUrl?: string;
+    onClickLogin: () => void;   // URL_PATHS.LOGIN 이동
+    onClickLogout: () => Promise<void>; // provider.logout()
+  }
+
+규칙
+- isAuthenticated === false → 로그인 버튼 노출, onClickLogin 동작
+- isAuthenticated === true → 아바타 트리거 노출, 드롭다운 내 onClickLogout 연결
+- user.profileImage가 없으면 기본 아이콘 사용
+
+==============================================
+
+체크리스트
+- [ ] isAuthenticated 값으로 버튼 영역 분기 가능
+- [ ] onClickLogin이 URL_PATHS.LOGIN으로 이동
+- [ ] onClickLogout이 provider.logout을 호출
+- [ ] userProfileImageUrl 매핑(없을 시 기본 아이콘 사용)

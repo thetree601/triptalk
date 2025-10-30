@@ -6,10 +6,69 @@ import Image from 'next/image';
 import { useBannerCarousel, BannerImage } from './hooks/index.banner.carousel.hook';
 import { usePathname } from 'next/navigation';
 import { URL_UTILS, URL_PATHS } from '@/commons/constants/url';
-import Link from 'next/link';
+import { useHeaderAuthVisibility } from './hooks/index.auth.hook';
 
 interface LayoutProps {
   children: React.ReactNode;
+}
+
+function AuthAvatarDropdown({ imageUrl, onClickLogout }: { imageUrl?: string; onClickLogout: () => Promise<void>; }) {
+  const [open, setOpen] = React.useState(false);
+  const avatarRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (avatarRef.current && !avatarRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open]);
+
+  return (
+    <div ref={avatarRef} style={{ position: 'relative' }}>
+      <button
+        className={styles.avatarTrigger}
+        aria-label="사용자 메뉴 열기"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <Image
+          src={imageUrl || '/icons/person.png'}
+          alt="사용자 아바타"
+          width={36}
+          height={36}
+          className={styles.avatarImage}
+        />
+        <Image
+          src="/icons/down_arrow.png"
+          alt="메뉴 열기"
+          width={16}
+          height={16}
+          className={styles.chevronIcon}
+        />
+      </button>
+      {open && (
+        <div className={styles.dropdownMenu} role="menu" aria-label="사용자 메뉴">
+          {/* 마이페이지는 현재 링크만 표기, 동작은 추후 연결 */}
+          <button className={styles.dropdownItem} role="menuitem">마이페이지</button>
+          <button
+            className={styles.dropdownItem}
+            role="menuitem"
+            onClick={async () => {
+              await onClickLogout();
+              setOpen(false);
+            }}
+          >
+            로그아웃
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -55,6 +114,9 @@ export default function Layout({ children }: LayoutProps) {
     autoPlayInterval: 3000,
     enableAutoPlay: true,
   });
+
+  const { isAuthenticated, userProfileImageUrl, onClickLogin, onClickLogout } = useHeaderAuthVisibility();
+
   return (
     <div className={styles.layout}>
       {/* Header */}
@@ -91,16 +153,23 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* User Actions */}
           <div className={styles.userActions}>
-            <Link href={URL_PATHS.LOGIN} className={styles.loginButton}>
-              <span className={styles.loginText}>로그인</span>
-              <Image 
-                src="/icons/right_icon.png" 
-                alt="Right Arrow" 
-                width={16}
-                height={16}
-                className={styles.loginIcon}
+            {!isAuthenticated ? (
+              <button onClick={onClickLogin} className={styles.loginButton} aria-label="로그인으로 이동">
+                <span className={styles.loginText}>로그인</span>
+                <Image 
+                  src="/icons/right_icon.png" 
+                  alt="Right Arrow" 
+                  width={16}
+                  height={16}
+                  className={styles.loginIcon}
+                />
+              </button>
+            ) : (
+              <AuthAvatarDropdown
+                imageUrl={userProfileImageUrl}
+                onClickLogout={onClickLogout}
               />
-            </Link>
+            )}
           </div>
         </div>
       </header>

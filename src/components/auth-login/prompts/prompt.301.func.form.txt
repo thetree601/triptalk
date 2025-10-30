@@ -5,94 +5,90 @@
 
 조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
             - @01-common.mdc
-            - @04-func.mdc
+            - @02-graphql.mdc
+            - @03-ui.mdc
 
 ==============================================
 
-조건-파일경로) 참고할 API  문서경로: https://main-practice.codebootcamp.co.kr/graphql
-조건-파일경로) 참고할 TSX  파일경로: src/components/auth-login/index.tsx
-조건-파일경로) 참고할 CSS  파일경로: src/components/auth-login/styles.module.css
-조건-파일경로) 구현될 HOOK 파일경로: src/components/auth-login/hooks/index.form.hook.tsx
-조건-파일경로) 구현될 TEST 파일경로: src/components/auth-login/tests/index.form.hook.spec.ts
+조건-피그마) 활용할MCP: CursorTalkToFigmaMCP(채널명: ipsmlh0a)
+조건-피그마) 구현될 컴포넌트 노드ID(로그인 페이지 전체 모습): 285:32713
+조건-피그마) 구현될 컴포넌트 노드ID(로그인 박스 안의 모습): 285:32715
 
 ==============================================
 
-핵심요구사항) 다음의 기능을 playwright 테스트를 활용하여 TDD기반으로 구현하고, 테스트에 통과할 때까지 반복할 것.
-            1) 테스트 제외 라이브러리
-                - jest
-                - @testing-library/react
+조건-파일경로) UI TSX: src/components/auth-login/index.tsx
+조건-파일경로) UI CSS: src/components/auth-login/styles.module.css
+조건-파일경로) 폼 훅: src/components/auth-login/hooks/index.form.hook.tsx
+조건-파일경로) 페이지 연결: src/app/auth/login/page.tsx
 
-            2) 테스트 조건
-                - timeout은 network 통신인 경우 2000ms 미만으로 설정할 것.
-                - timeout은 network 통신이 아닌 경우 설정하지 않거나, 500ms 미만으로 설정할 것.
-                - /auth/login 페이지가 완전히 로드된 후 테스트할 것.
-                    - 페이지 로드 식별 요구사항: 고정식별자 data-testid 대기 방법
-                    - 페이지 로드 식별 금지사항: networkidle 대기 방법
+조건-파일경로) GraphQL 쿼리: src/lib/graphql/queries/auth.ts
+조건-파일경로) GraphQL 뮤테이션: src/lib/graphql/mutations/auth.ts
+조건-파일경로) GraphQL 타입: src/lib/graphql/types/auth.ts
 
-            3) 테스트 API 조건
-                3-1) 데이터
-                    - 실제데이터를 사용할 것.
-                    - Mock데이터 사용하지 말 것.
+조건-환경) Apollo 클라이언트는 이미 설정되어 있다고 가정. (필요 시 src/commons/constants/prompts/prompt.105.apollo.client.setup.txt 기준)
 
-                3-2) 성공시나리오
-                    - API 모킹하지 말 것.
-                        - 사용할 email: "749884738@dldl.com"
-                        - 사용할 password: "asdf12345"
+==============================================
 
-                    - loginUser API: accessToken이 정상적으로 반환되는지 확인할 것.
-                    
-                    - fetchUserLoggedIn API: _id, name이 정상적으로 반환되는지 확인할 것.
+핵심요구사항-1) GraphQL 인증 스키마/문서 정의를 구현할 것. (auth.ts 일괄 생성)
+            1. 쿼리 (src/lib/graphql/queries/auth.ts)
+                - fetchUserLoggedIn: 로그인된 사용자 정보 조회
+                - 반환: { _id, name, email }
+            2. 뮤테이션 (src/lib/graphql/mutations/auth.ts)
+                - loginUser(input: { email, password }): { accessToken }
+                - createUser(input: { email, password, name }): { _id }
+            3. 타입 (src/lib/graphql/types/auth.ts)
+                - User: { _id: string; name: string; email: string }
+                - LoginInput: { email: string; password: string }
+                - CreateUserInput: { email: string; password: string; name: string }
+                - LoginResponse: { accessToken: string }
+                - CreateUserResponse: { _id: string }
+            4. 문서 작성 규칙
+                - gql 템플릿 리터럴 사용, 변수/반환 타입 정의
+            5. 에러 처리
+                - GraphQL 에러/네트워크 에러 타입 정의 및 기본 처리 방안 포함
 
-                3-3) 실패시나리오
-                    - API 모킹할 것.
+핵심요구사항-2) 로그인 폼 기능을 react-hook-form + zod + @tanstack/react-query로 구현할 것.
+            1) 라이브러리
+                - react-hook-form, @hookform/resolvers, zod, @tanstack/react-query 사용
+            2) UX/검증
+                - email: '@' 포함
+                - password: 최소 1글자 이상
+                - 모든 인풋 유효 시 로그인 버튼 활성화
+            3) 액션 플로우
+                - 로그인 버튼 클릭 → loginUser(email, password)
+                    - 성공 시 accessToken 획득
+                - accessToken 확보 후 → fetchUserLoggedIn 호출
+                    - 요청 시 헤더: { Authorization: "Bearer <accessToken>" }
+                    - 성공 시 { _id, name, email } 반환
+                - 로컬스토리지 저장
+                    - key "accessToken" → accessToken
+                    - key "user" → JSON.stringify({ _id, name })
+                - 성공 모달 노출 → 확인 시 라우팅 처리(메인 목록 페이지)
+                    - 모달 사양: <Modal />, variant: 'info', actions: 'single', 메시지: "로그인 되었습니다"
+                    - 확인 클릭 시: 모든 모달 닫기 → 메인 목록(URL_PATHS.TRIPPOSTS)로 이동
+                - 실패 시 실패 모달 노출 → 확인 시 폼 유지 또는 에러 포커싱
+            4) 에러/로딩
+                - 버튼 로딩 상태, 폼 에러 메시지, 서버 에러 메시지 노출
+                - 예외 케이스 대비 기본 오류 메시지 가이드
 
-핵심요구사항) 다음의 조건에 맞게 회원가입 폼 등록 기능을 step-by-step 으로 구현하고, 적용 결과를 체크리스트로 반환할 것.
-            1) 라이브러리조건
-                - 폼: 이미 설치되어있는 react-hook-form, @hookform/resolvers를 사용할 것.
-                - 검증: 이미 설치되어있는 zod를 사용할 것.
-                - API: 이미 설치되어있는 @tanstack/react-query를 사용할 것.
+핵심요구사항-3) UI 구현
+            - MCP를 통해 피그마 노드와 맞춘 레이아웃/타이포/컬러 적용
+            - 글로벌 토큰(global.css) 변수 활용(하드코딩 금지)
+            - 컴포넌트를 페이지에서 import하여 연결 (src/app/auth/login/page.tsx)
 
-            2) 유저시나리오(로그인)
-                1. 모든 인풋이 입력되면 로그인버튼을 활성화 할 것.
+핵심요구사항-4) 테스트/모킹(선택)
+            - 실패 시나리오용 API 모킹 가능 (네트워크 에러, 인증 실패)
+            - 기본 유닛 검증(버튼 disabled/enable, 폼 유효성, 로컬스토리지 저장)
 
-                2. 로그인버튼을 누르면 로그인API를 요청할 것.
-                    2-1) API명: loginUser
-                    2-2) 요청데이터: email, password
-                    2-3) 응답데이터: { accessToken }
-                    2-4) zod 검증 조건
-                        - email: '@' 포함
-                        - password: 최소 1글자 이상
+==============================================
 
-                3. 로그인에 성공하면, 회원조회API를 요청할 것.
-                    3-1) API명: fetchUserLoggedIn
-                    3-2) 요청데이터: 헤더에 인증정보 포함 => "Authorization": "Bearer accessToken"
-                    3-3) 반환받은 결과를 로컬스토리지에 저장할 것.
-                        - loginUser API => key: "accessToken", value: accessToken
-                        - fetchUserLoggedIn API => key: "user", value: { _id, name }
-                    3-4) 로그인완료모달을 노출하고, 아래의 상황별 지시를 따를 것.
-
-                4. 로그인에 실패하면, 로그인실패모달을 노출하고, 아래의 상황별 지시를 따를 것.
-                
-
-                5. 각 상황별 모달의 확인을 누르면, 아래의 지시에 따를 것.
-                    5-1) 모달조건
-                        - 모달 프로바이더 경로: src/commons/providers/modal/modal.provider.tsx
-                        - 이미 셋팅되어있는 modal.provider를 사용할 것.
-                        - 이미 셋팅되어있는 modal.provider를 수정하지 말 것.
-                        - 모달은 한 번만 보여야 하며, 닫힌 뒤에는 같은 상황에서 다시 나타나지 않도록 할 것.
-
-                    5-2) 공통컴포넌트조건
-                        - 로그인완료모달: <Modal />, variant: 'info', actions: 'single'
-                        - 로그인실패모달: <Modal />, variant: 'danger', actions: 'single'
-
-                    5-3) 페이지이동조건
-                        - commons/constants/url.ts의 페이지URL에 정의된 경로로 이동할 것.
-
-                        - 로그인완료모달:
-                            1. '확인' 클릭
-                            2. 열려있는 모든 모달을 닫기
-                            3. 일기목록페이지로 이동 => /diaries
-
-                        - 로그인실패모달:
-                            1. '확인' 클릭
-                            2. 열려있는 모든 모달을 닫기
+산출물 체크리스트)
+[ ] src/lib/graphql/types/auth.ts 정의 완료 (User, LoginInput, CreateUserInput, LoginResponse, CreateUserResponse)
+[ ] src/lib/graphql/mutations/auth.ts에 loginUser, createUser 문서/타입 정의
+[ ] src/lib/graphql/queries/auth.ts에 fetchUserLoggedIn 문서/타입 정의
+[ ] src/components/auth-login/hooks/index.form.hook.tsx에 RHF+Zod+RQ 폼 로직 구현
+[ ] 성공 시 accessToken, user({_id, name}) 로컬스토리지 저장
+[ ] 실패/성공 모달 동작, 확인 시 라우팅 동작(성공 시 "로그인 되었습니다" 모달 → URL_PATHS.TRIPPOSTS 이동)
+[ ] src/components/auth-login/index.tsx UI 피그마 반영 및 훅 연동
+[ ] src/app/auth/login/page.tsx에서 컴포넌트 연결
+[ ] 로딩/에러 상태 UX 반영

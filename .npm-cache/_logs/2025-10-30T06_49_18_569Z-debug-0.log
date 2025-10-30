@@ -1,0 +1,52 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.9.3
+2 info using node@v22.19.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/sohee/Documents/triptalk/.npmrc
+5 silly config load:file:/Users/sohee/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm i react-daum-postcode @types/react-daum-postcode
+8 verbose argv "i" "react-daum-postcode" "@types/react-daum-postcode" "--save-dev" "--cache" ".npm-cache"
+9 verbose logfile logs-max:10 dir:/Users/sohee/Documents/triptalk/.npm-cache/_logs/2025-10-30T06_49_18_569Z-
+10 verbose logfile /Users/sohee/Documents/triptalk/.npm-cache/_logs/2025-10-30T06_49_18_569Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 silly idealTree buildDeps
+14 silly fetch manifest react-daum-postcode@*
+15 silly packumentCache full:https://registry.npmjs.org/react-daum-postcode cache-miss
+16 http fetch GET https://registry.npmjs.org/react-daum-postcode attempt 1 failed with ENOTFOUND
+17 http fetch GET https://registry.npmjs.org/react-daum-postcode attempt 2 failed with ENOTFOUND
+18 http fetch GET https://registry.npmjs.org/react-daum-postcode attempt 3 failed with ENOTFOUND
+19 silly fetch manifest @types/react-daum-postcode@*
+20 silly packumentCache full:https://registry.npmjs.org/@types%2freact-daum-postcode cache-miss
+21 http fetch GET https://registry.npmjs.org/@types%2freact-daum-postcode attempt 1 failed with ENOTFOUND
+22 http fetch GET https://registry.npmjs.org/@types%2freact-daum-postcode attempt 2 failed with ENOTFOUND
+23 http fetch GET https://registry.npmjs.org/@types%2freact-daum-postcode attempt 3 failed with ENOTFOUND
+24 silly placeDep ROOT @types/react-daum-postcode@ OK for: triptalk@0.1.0 want: *
+25 silly placeDep ROOT react-daum-postcode@ OK for: triptalk@0.1.0 want: *
+26 verbose type system
+27 verbose stack FetchError: request to https://registry.npmjs.org/@types%2freact-daum-postcode failed, reason: getaddrinfo ENOTFOUND registry.npmjs.org
+27 verbose stack     at ClientRequest.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/minipass-fetch/lib/index.js:130:14)
+27 verbose stack     at ClientRequest.emit (node:events:519:28)
+27 verbose stack     at emitErrorEvent (node:_http_client:105:11)
+27 verbose stack     at _destroy (node:_http_client:898:9)
+27 verbose stack     at onSocketNT (node:_http_client:918:5)
+27 verbose stack     at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+28 error code ENOTFOUND
+29 error syscall getaddrinfo
+30 error errno ENOTFOUND
+31 error network request to https://registry.npmjs.org/@types%2freact-daum-postcode failed, reason: getaddrinfo ENOTFOUND registry.npmjs.org
+32 error network This is a problem related to network connectivity.
+32 error network In most cases you are behind a proxy or have bad network settings.
+32 error network
+32 error network If you are behind a proxy, please make sure that the
+32 error network 'proxy' config is set properly.  See: 'npm help config'
+33 silly unfinished npm timer reify 1761806958635
+34 silly unfinished npm timer reify:loadTrees 1761806958636
+35 verbose cwd /Users/sohee/Documents/triptalk
+36 verbose os Darwin 24.6.0
+37 verbose node v22.19.0
+38 verbose npm  v10.9.3
+39 verbose exit 1
+40 verbose code 1
+41 error A complete log of this run can be found in: /Users/sohee/Documents/triptalk/.npm-cache/_logs/2025-10-30T06_49_18_569Z-debug-0.log

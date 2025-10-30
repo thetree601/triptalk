@@ -9,67 +9,107 @@
 
 ==============================================
 
-조건-파일경로) 참고할 TSX  파일경로: src/components/diaries-new/index.tsx
-조건-파일경로) 참고할 CSS  파일경로: src/components/diaries-new/styles.module.css
-조건-파일경로) 구현될 HOOK 파일경로: src/components/diaries-new/hooks/index.form.hook.tsx
-조건-파일경로) 구현될 TEST 파일경로: src/components/diaries-new/tests/index.form.hook.spec.ts
+조건-파일경로) 구현/참고 TSX 파일경로: src/components/tripposts-new/index.tsx
+조건-파일경로) 구현/참고 CSS 파일경로: src/components/tripposts-new/styles.module.css
+조건-파일경로) 구현될 HOOK 파일경로: src/components/tripposts-new/hooks/index.form.hook.tsx
+조건-파일경로) 구현될 TEST 파일경로: src/components/tripposts-new/tests/index.form.hook.spec.ts
 
 ==============================================
 
-핵심요구사항) 다음의 기능을 playwright 테스트를 활용하여 TDD기반으로 구현할 것.
-            1) 테스트 제외 라이브러리
-                - jest
-                - @testing-library/react
+핵심요구사항) "등록 → 생성된 id 획득 → 상세로 라우팅 → 상세 fetch" 흐름을 step-by-step으로 구현하고, 적용 결과를 체크리스트로 반환할 것.
 
-            2) 테스트 조건
-                - timeout은 설정하지 않거나, 500ms 미만으로 설정할 것.
-                - /diaries 페이지가 완전히 로드된 후 일기쓰기버튼을 클릭한 이후 테스트할 것.
-                    - 페이지 로드 식별 요구사항: 고정식별자 data-testid 대기 방법
-                    - 페이지 로드 식별 금지사항: networkidle 대기 방법
+            1) 라이브러리/환경 조건
+                - 폼: react-hook-form, @hookform/resolvers
+                - 검증: zod
+                - 데이터요청: @apollo/client (useMutation, useQuery)
+                - 라우팅: next/navigation의 useRouter
+                - 주소검색: react-daum-postcode (우편번호/주소 검색 전용)
+                - URL 상수/유틸: src/commons/constants/url.ts (URL_UTILS.createTripPostDetailPath 사용)
 
-            3) 테스트 로컬스토리지 조건
-                3-1) 데이터
-                    - 실제데이터를 사용할 것.
-                    - Mock데이터 사용하지 말 것.
+            2) GraphQL 조건 (개발 가이드)
+                - 생성 뮤테이션: createBoard (또는 API 스키마의 생성 뮤테이션명) 호출
+                    - 입력: title, contents, youtubeUrl(optional), images(optional) 등 스키마에 맞춤
+                    - 반환: 생성된 문서의 _id (필수)
+                - 상세 조회 쿼리: fetchBoard(id: ID!) → 상세 데이터 반환
+                - 캐시 전략: 생성 성공 시 목록 쿼리(FETCH_BOARDS, FETCH_BOARDS_OF_THE_BEST) 갱신 또는 무효화
 
-                3-2) 성공시나리오
-                    - 로컬스토리지 모킹하지 말 것.
+            3) 유저 시나리오(등록하기)
+                1. 필수 필드 유효 시에만 "등록하기" 버튼 활성화
+                    - 필수: 작성자(writer), 비밀번호(password), 제목(title), 내용(contents)
+                    - 선택: 우편번호/주소, 유튜브URL, 이미지들(images) 등 나머지 필드
+                2. "등록하기" 클릭 시
+                    - 중복 클릭 방지: 로딩 동안 버튼 disabled 처리
+                    - GraphQL createBoard 실행 → 성공 시 생성된 _id 획득
+                3. 성공 모달 노출 (<Modal />), variant: 'info', actions: 'single'
+                4. 모달의 확인 클릭 시
+                    - 모든 모달 닫기 (src/commons/providers/modal/modal.provider.tsx 사용, 수정 금지)
+                    - 생성된 _id로 상세 페이지로 이동
+                        - 경로 생성: URL_UTILS.createTripPostDetailPath(_id) 또는 '/tripposts/[id]' 치환
+                        - router.push(생성된 경로)
 
-                3-3) 실패시나리오
-                    - 로컬스토리지 모킹하지 말 것.
+            4) 상세 페이지 fetch 연동(라우팅 이후 동작)
+                - 상세 페이지(`src/components/tripposts-detail/index.tsx`)는 쿼리 파라미터 id를 읽어
+                  fetchBoard(id) CSR로 조회(useQuery)
+                - 로딩/에러/빈데이터 상태 처리
+                - 등록 직후 진입 시 최초 1회는 강제 refetch 허용
 
-핵심요구사항) 다음의 조건에 맞게 일기쓰기 폼 등록 기능을 step-by-step 으로 구현하고, 적용 결과를 체크리스트로 반환할 것.
-            1) 라이브러리조건
-                - 폼: 이미 설치되어있는 react-hook-form, @hookform/resolvers를 사용할 것.
-                - 검증: 이미 설치되어있는 zod를 사용할 것.
+            5) 예외/에러 처리
+                - 뮤테이션 실패 시: 에러 모달(<Modal />, variant: 'error') 표시
+                - 폼 레벨 에러 메시지 노출 (zod 메시지 매핑)
+                - 네트워크 에러와 GraphQL 에러 구분하여 사용자 메시지 제공
 
-            2) 데이터조건
-                - 저장소: 로컬스토리지
-                - key: diaries
-                - value: [{ 
-                    id: number,
-                    title: string, 
-                    content: string, 
-                    emotion: enum.ts 경로에 정의된 emotion enum 타입을 import하여 사용할 것.
-                    createdAt: string
-                }]
-            
-            3) 유저시나리오(등록하기)
-                1. 모든 인풋이 입력되면 등록하기버튼을 활성화 할 것.
-                2. 등록하기버튼을 클릭시, 로컬스토리지에 이미 diaries가 존재하는지 확인하고,
-                   존재하면 기존의 diaries에 push하되, id를 가장큰 id+1로 설정하여 재등록하고, 
-                   존재하지 않으면 새로운 diaries 배열을 생성하여 id는 1로 설정하여 등록할 것.
-                3. 등록이 완료되면, 등록완료모달을 노출할 것.
-                4. 등록완료모달의 확인을 누르면, 상세페이지로 이동하고, 열려있는 모든 모달을 닫을 것.
-                    4-1) 모달조건
-                        - 모달 프로바이더 경로: src/commons/providers/modal/modal.provider.tsx
-                        - 이미 셋팅되어있는 modal.provider를 사용할 것.
-                        - 이미 셋팅되어있는 modal.provider를 수정하지 말 것.
+            6) 접근성/UX
+                - 제출 중 스피너 또는 진행 상태 표현
+                - 키보드 사용 가능(Enter 제출), 비활성화 상태의 명확한 스타일
+                - 성공/실패 피드백은 모달을 통해 명확하게 전달
+                - 이미지 업로드 시 선택 즉시 미리보기 표시
+                    - File 입력으로 선택된 파일들을 ObjectURL 또는 FileReader로 미리보기 생성
+                    - 최대 업로드 개수/허용 확장자/최대 용량 검증 및 오류 메시지 노출
+                    - 미리보기 썸네일에서 개별 삭제 가능(선택 취소)
+                - 주소 검색 UX
+                    - 주소 입력란 옆 "우편번호 찾기" 버튼 클릭 시 react-daum-postcode 모달/레이어 오픈
+                    - onComplete에서 우편번호/기본주소를 폼 필드에 즉시 반영하고, 상세주소는 별도 입력란 제공
 
-                    4-2) 공통컴포넌트조건
-                        - 등록완료모달: <Modal />, variant: 'info', actions: 'single'
+==============================================
 
-                    4-3) 페이지이동조건
-                        - commons/constants/url.ts의 페이지URL에 정의된 경로로 이동할 것.
-                        - 등록된 id를 사용하여 일기상세페이지로 다이나믹라우팅 할 것.
-                        - 일기상세페이지: url.ts에 정의된 일기상세페이지 => /diaries/[id]
+세부 구현 가이드)
+    - HOOK: src/components/tripposts-new/hooks/index.form.hook.tsx
+        - useForm + zodResolver 설정
+        - useMutation(createBoard) 바인딩, onSubmit에서 실행
+        - 성공 시 반환 data.createBoard._id를 보관 → 성공 모달 오픈 핸들러 노출
+        - 모달 확인 핸들러에서 router.push(URL_UTILS.createTripPostDetailPath(_id))
+        - 로딩/에러/disabled 상태 관리 및 반환
+        - 우편번호 검색: react-daum-postcode 컴포넌트/함수 사용, onComplete로 폼 값 setValue
+        - 이미지 업로드: input[type="file" multiple] change에서
+            - 파일 리스트를 상태로 관리(미리보기 URL 포함)
+            - 유효성 체크(확장자/용량/개수)
+            - 미리보기 썸네일 제공 및 삭제 핸들러 노출
+
+    - 컴포넌트: src/components/tripposts-new/index.tsx
+        - 훅 사용하여 폼 UI 구성, 버튼 상태(로딩/disabled) 반영
+        - 성공/실패 모달 렌더링 (Modal provider 사용)
+        - 주소 영역: 우편번호/기본주소/상세주소 입력 + "우편번호 찾기" 트리거 → react-daum-postcode 렌더링
+        - 이미지 영역: 업로드 버튼 + 미리보기 그리드(썸네일, 삭제 버튼)
+
+    - 상세: src/components/tripposts-detail/index.tsx (참고)
+        - useSearchParams 또는 props로 받은 id 기반 useQuery(fetchBoard)
+        - 로딩/에러/빈데이터 UI 반영
+
+    - 테스트: src/components/tripposts-new/tests/index.form.hook.spec.ts
+        - 유효 입력 시 제출 버튼 활성화
+        - 제출 시 createBoard 호출, 성공 시 모달 오픈
+        - 모달 확인 클릭 시 router.push 호출(상세 경로)
+
+==============================================
+
+체크리스트)
+    - [ ] 폼 유효성(zod)과 버튼 활성화가 동작한다 (필수: 작성자/비밀번호/제목/내용)
+    - [ ] createBoard 호출 후 _id를 획득한다
+    - [ ] 성공 모달이 노출된다(variant: 'info', actions: 'single')
+    - [ ] 모달 확인 시 모든 모달이 닫힌다
+    - [ ] 상세 경로로 router.push가 실행된다 (URL_UTILS.createTripPostDetailPath)
+    - [ ] 상세 페이지 진입 시 id 기반 fetch가 수행된다
+    - [ ] 로딩/에러/빈데이터 상태가 적절히 처리된다
+    - [ ] 실패 시 에러 모달이 표시된다
+    - [ ] react-daum-postcode로 우편번호/주소 입력이 가능하다
+    - [ ] 이미지 업로드 시 즉시 미리보기가 표시되고 개별 삭제가 가능하다

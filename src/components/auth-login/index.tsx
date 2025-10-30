@@ -1,18 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './styles.module.css';
 import Image from 'next/image';
+import useLoginForm from './hooks/index.form.hook';
 
 const AuthLogin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: 로그인 로직 구현
-    console.log('Login attempt:', { email, password });
-  };
+  const { register, onSubmit, isValid, isSubmitting } = useLoginForm();
 
   return (
     <div className={styles.container}>
@@ -37,12 +31,11 @@ const AuthLogin = () => {
             트립트립에 로그인 하세요.
           </p>
 
-          <form onSubmit={handleSubmit} className={styles.form}>
+          <form onSubmit={onSubmit} className={styles.form}>
             <div className={styles.inputGroup}>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register('email')}
                 placeholder="이메일을 입력해 주세요."
                 className={styles.input}
                 required
@@ -52,16 +45,15 @@ const AuthLogin = () => {
             <div className={styles.inputGroup}>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                {...register('password')}
                 placeholder="비밀번호를 입력해 주세요."
                 className={styles.input}
                 required
               />
             </div>
 
-            <button type="submit" className={styles.loginButton}>
-              로그인
+            <button type="submit" className={styles.loginButton} disabled={!isValid || isSubmitting}>
+              {isSubmitting ? '로그인 중...' : '로그인'}
             </button>
           </form>
 
@@ -70,6 +62,7 @@ const AuthLogin = () => {
               회원가입
             </a>
           </div>
+
         </div>
       </div>
 

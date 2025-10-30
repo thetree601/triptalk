@@ -7,7 +7,8 @@ const nextConfig = {
         hostname: 'storage.googleapis.com'
       }
     ]
-  }
+  },
+  transpilePackages: ['apollo-upload-client']
 };
 
 export default nextConfig;

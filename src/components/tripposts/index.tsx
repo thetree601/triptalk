@@ -3,8 +3,10 @@ import styles from './styles.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useQuery } from '@apollo/client/react';
-import { FETCH_BOARDS_OF_THE_BEST, FETCH_BOARDS, type FetchBoardsOfTheBestResponse, type FetchBoardsResponse, type FetchBoardsVariables } from '@/lib/graphql/queries/boards';
+import { FETCH_BOARDS_OF_THE_BEST, FETCH_BOARDS, FETCH_BOARDS_COUNT, type FetchBoardsOfTheBestResponse, type FetchBoardsResponse, type FetchBoardsVariables } from '@/lib/graphql/queries/boards';
 import type { Board } from '@/lib/apollo/client';
+import { URL_UTILS } from '@/commons/constants/url';
+import { useMemo, useState } from 'react';
 
 // Hot Post 타입 정의
 interface HotPost {
@@ -59,20 +61,32 @@ export default function TripPosts(): JSX.Element {
   }));
 
   // GraphQL: 게시판 목록 (기본 1페이지)
-  const { data: boardsData } = useQuery<FetchBoardsResponse, FetchBoardsVariables>(FETCH_BOARDS, { variables: { page: 1 } });
-  const boardPosts: BoardPost[] = (boardsData?.fetchBoards ?? []).map((b: Board, idx: number) => ({
-    id: b._id,
-    number: String(idx + 1),
-    title: b.title,
-    writer: b.writer ?? (b.user?.name ?? ''),
-    date: formatDate(b.createdAt)
-  }));
-
-  // 페이지네이션 상태 (데모용)
-  const totalPages = 5;
-  const currentPage = 1;
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  // 전체 개수 조회로 총 페이지 계산 (페이지당 10개 가정)
+  const { data: countData } = useQuery<{ fetchBoardsCount: number }>(FETCH_BOARDS_COUNT);
+  const totalPages = Math.max(1, Math.ceil((countData?.fetchBoardsCount ?? 0) / 10));
   const canGoPrev = currentPage > 1;
   const canGoNext = currentPage < totalPages;
+
+  const { data: boardsData, loading: boardsLoading } = useQuery<FetchBoardsResponse, FetchBoardsVariables>(
+    FETCH_BOARDS,
+    {
+      variables: { page: currentPage },
+      notifyOnNetworkStatusChange: true,
+      fetchPolicy: 'network-only',
+      nextFetchPolicy: 'cache-first',
+    }
+  );
+  const boardPosts: BoardPost[] = useMemo(() => (
+    (boardsData?.fetchBoards ?? []).map((b: Board, idx: number) => ({
+      id: b._id,
+      number: String(idx + 1),
+      title: b.title,
+      writer: b.writer ?? (b.user?.name ?? ''),
+      date: formatDate(b.createdAt)
+    }))
+  ), [boardsData]);
+
 
   return (
     <>
@@ -204,12 +218,28 @@ export default function TripPosts(): JSX.Element {
           </div>
           
           <div className={styles.tableBody}>
-            {boardPosts.map((post) => (
+            {boardsLoading && (
+              <div className={styles.tableRow}>
+                <div className={styles.cellNumber}>-</div>
+                <div className={styles.cellTitle}>로딩 중...</div>
+                <div className={styles.cellWriter}></div>
+                <div className={styles.cellDate}></div>
+              </div>
+            )}
+            {!boardsLoading && boardPosts.map((post) => (
               <div key={post.id} className={styles.tableRow}>
-                <div className={styles.cellNumber}>{post.number}</div>
-                <div className={styles.cellTitle}>{post.title}</div>
-                <div className={styles.cellWriter}>{post.writer}</div>
-                <div className={styles.cellDate}>{post.date}</div>
+                <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellNumber}>
+                  {post.number}
+                </Link>
+                <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellTitle}>
+                  {post.title}
+                </Link>
+                <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellWriter}>
+                  {post.writer}
+                </Link>
+                <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellDate}>
+                  {post.date}
+                </Link>
               </div>
             ))}
           </div>
@@ -220,6 +250,7 @@ export default function TripPosts(): JSX.Element {
                 aria-label="이전"
                 aria-disabled={!canGoPrev}
                 disabled={!canGoPrev}
+                onClick={() => canGoPrev && setCurrentPage((p) => Math.max(1, p - 1))}
               >
                 <Image
                   src={canGoPrev ? '/icons/leftenable_outline_light_m.svg' : '/icons/leftdisabled_outline_light_m.svg'}
@@ -231,11 +262,23 @@ export default function TripPosts(): JSX.Element {
               </button>
               
               <div className={styles.paginationNumbers}>
-                <button className={`${styles.paginationNumber} ${styles.active}`}>1</button>
-                <button className={styles.paginationNumber}>2</button>
-                <button className={styles.paginationNumber}>3</button>
-                <button className={styles.paginationNumber}>4</button>
-                <button className={styles.paginationNumber}>5</button>
+                {(() => {
+                  const windowSize = 5;
+                  const start = Math.floor((currentPage - 1) / windowSize) * windowSize + 1;
+                  const end = Math.min(start + windowSize - 1, totalPages);
+                  const pages = [] as number[];
+                  for (let n = start; n <= end; n++) pages.push(n);
+                  return pages;
+                })().map((n) => (
+                  <button
+                    key={n}
+                    className={`${styles.paginationNumber} ${currentPage === n ? styles.active : ''}`}
+                    aria-current={currentPage === n ? 'page' : undefined}
+                    onClick={() => setCurrentPage(n)}
+                  >
+                    {n}
+                  </button>
+                ))}
               </div>
               
               <button
@@ -243,6 +286,7 @@ export default function TripPosts(): JSX.Element {
                 aria-label="다음"
                 aria-disabled={!canGoNext}
                 disabled={!canGoNext}
+                onClick={() => canGoNext && setCurrentPage((p) => Math.min(totalPages, p + 1))}
               >
                 <Image
                   src={canGoNext ? '/icons/rightenable_outline_light_m.svg' : '/icons/rightdisabled_outline_light_m.svg'}
