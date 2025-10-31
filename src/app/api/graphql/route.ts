@@ -11,7 +11,6 @@ function buildForwardHeaders(reqHeaders: Headers) {
     if (
       k === 'host' ||
       k === 'content-length' ||
-      k === 'origin' ||
       k === 'referer' ||
       k.startsWith('sec-') ||
       k === 'connection' ||
@@ -22,11 +21,13 @@ function buildForwardHeaders(reqHeaders: Headers) {
   return headers;
 }
 
-export async function OPTIONS() {
+export async function OPTIONS(req: Request) {
+  const origin = req.headers.get('origin') ?? '*';
   return new Response(null, {
     status: 204,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': origin,
+      'Vary': 'Origin',
       'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
@@ -52,7 +53,9 @@ async function forward(method: 'GET' | 'POST', req: Request) {
   const upstream = await fetch(TARGET, init);
 
   const resHeaders = new Headers(upstream.headers);
-  resHeaders.set('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.get('origin') ?? '*';
+  resHeaders.set('Access-Control-Allow-Origin', origin);
+  resHeaders.set('Vary', 'Origin');
 
   return new Response(upstream.body, {
     status: upstream.status,
