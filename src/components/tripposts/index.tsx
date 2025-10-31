@@ -9,7 +9,6 @@ import { useModal } from '@/commons/providers/modal/modal.provider';
 import type { Board } from '@/lib/apollo/client';
 import { URL_UTILS } from '@/commons/constants/url';
 import { useMemo, useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 
 // Hot Post 타입 정의
 interface HotPost {
@@ -64,7 +63,6 @@ export default function TripPosts(): JSX.Element {
   }));
 
   // GraphQL: 게시판 목록 (기본 1페이지)
-  const router = useRouter();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTitle, setSearchTitle] = useState<string>('');
   const [debouncedTitle, setDebouncedTitle] = useState<string>('');
@@ -73,16 +71,21 @@ export default function TripPosts(): JSX.Element {
   const startRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLInputElement>(null);
 
-  // URL 동기화
+  // URL 동기화 (라우팅 없이 주소만 교체하여 전체 리렌더 방지)
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams();
     if (currentPage > 1) params.set('page', String(currentPage));
     if (debouncedTitle.trim()) params.set('title', debouncedTitle.trim());
     if (startDate) params.set('startDate', startDate);
     if (endDate) params.set('endDate', endDate);
     const query = params.toString();
-    router.push(query ? `/tripposts?${query}` : '/tripposts');
-  }, [currentPage, debouncedTitle, startDate, endDate, router]);
+    const url = query ? `/tripposts?${query}` : '/tripposts';
+    const currentUrl = `${window.location.pathname}${window.location.search}`;
+    if (currentUrl !== url) {
+      window.history.replaceState(null, '', url);
+    }
+  }, [currentPage, debouncedTitle, startDate, endDate]);
 
   // 검색어 디바운스
   useEffect(() => {
@@ -351,18 +354,18 @@ export default function TripPosts(): JSX.Element {
             )}
             {!boardsLoading && boardPosts.map((post) => (
               <div key={post.id} className={styles.tableRow}>
-                <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellNumber}>
+                <a href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellNumber}>
                   {post.number}
-                </Link>
-                <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellTitle}>
+                </a>
+                <a href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellTitle}>
                   {post.title}
-                </Link>
-                <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellWriter}>
+                </a>
+                <a href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellWriter}>
                   {post.writer}
-                </Link>
-                <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellDate}>
+                </a>
+                <a href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellDate}>
                   {post.date}
-                </Link>
+                </a>
                 <div className={styles.cellActions}>
                   <button
                     type="button"
