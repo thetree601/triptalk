@@ -143,7 +143,7 @@
   font-family: var(--font-family-korean-primary);
   font-size: 14px;
   line-height: 20px;
-  color: var(--color-text-primary);
+  color: #111111;
   background: transparent;
   border: none;
   width: 100%;

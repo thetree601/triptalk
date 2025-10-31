@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
 import { useMutation } from '@apollo/client/react';
@@ -22,6 +22,7 @@ export default function TripPostDetail({ id }: TripPostDetailProps) {
 
   const [badCount, setBadCount] = useState<number>(0);
   const [goodCount, setGoodCount] = useState<number>(0);
+  const [showAddressTooltip, setShowAddressTooltip] = useState<boolean>(false);
 
   useEffect(() => {
     setBadCount(board?.dislikeCount ?? 0);
@@ -30,6 +31,31 @@ export default function TripPostDetail({ id }: TripPostDetailProps) {
 
   const [likeBoard] = useMutation<LikeBoardResponse, { boardId: string }>(LIKE_BOARD);
   const [dislikeBoard] = useMutation<DislikeBoardResponse, { boardId: string }>(DISLIKE_BOARD);
+
+  // YouTube helpers
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoId = useMemo(() => {
+    const url = board?.youtubeUrl ?? '';
+    if (!url) return '';
+    try {
+      // Match common YouTube URL formats
+      const patterns = [
+        /(?:v=)([a-zA-Z0-9_-]{11})/, // watch?v=
+        /youtu\.be\/([a-zA-Z0-9_-]{11})/, // youtu.be/
+        /embed\/([a-zA-Z0-9_-]{11})/, // embed/
+      ];
+      for (const re of patterns) {
+        const m = url.match(re);
+        if (m && m[1]) return m[1];
+      }
+      const u = new URL(url);
+      const v = u.searchParams.get('v');
+      if (v && v.length === 11) return v;
+      return '';
+    } catch {
+      return '';
+    }
+  }, [board?.youtubeUrl]);
 
   if (loading) {
     return <div className={styles.detail}><p>로딩 중...</p></div>;
@@ -60,29 +86,70 @@ export default function TripPostDetail({ id }: TripPostDetailProps) {
 
       <div className={styles.iconRow}>
         <Image src="/icons/link.png" alt="link" width={24} height={24} />
-        <Image src="/icons/location.png" alt="location" width={24} height={24} />
+        <div
+          className={styles.iconWrapper}
+          onMouseEnter={() => setShowAddressTooltip(true)}
+          onMouseLeave={() => setShowAddressTooltip(false)}
+        >
+          <Image src="/icons/location.png" alt="location" width={24} height={24} />
+          {showAddressTooltip && (board?.boardAddress?.address || board?.boardAddress?.zipcode || board?.boardAddress?.addressDetail) && (
+            <div className={styles.addressTooltip} role="tooltip">
+              {`${board?.boardAddress?.zipcode ? `(${board.boardAddress.zipcode}) ` : ''}${board?.boardAddress?.address ?? ''}${board?.boardAddress?.addressDetail ? ` ${board.boardAddress.addressDetail}` : ''}`.trim()}
+            </div>
+          )}
+        </div>
       </div>
 
-      {board?.images?.[0] && (
-        <div className={styles.heroImageWrapper}>
-          <Image
-            src={board.images[0]?.startsWith('codecamp-file-storage/') ? `https://storage.googleapis.com/${board.images[0]}` : board.images[0]}
-            alt="hero"
-            width={400}
-            height={531}
-            className={styles.heroImage}
-          />
+      {board?.images?.filter(Boolean)?.length ? (
+        <div className={styles.heroImagesGrid}>
+          {board.images.filter(Boolean).slice(0, 3).map((src, i) => {
+            const url = src.startsWith('codecamp-file-storage/') ? `https://storage.googleapis.com/${src}` : src;
+            return (
+              <Image
+                key={`hero-${i}`}
+                src={url}
+                alt={`hero-${i + 1}`}
+                width={400}
+                height={531}
+                className={styles.heroImage}
+              />
+            );
+          })}
         </div>
-      )}
+      ) : null}
 
       <article className={styles.contentText}>
         {board?.contents ?? ''}
       </article>
 
-      {board?.youtubeUrl && (
+      {board?.youtubeUrl && videoId && (
         <div className={styles.videoThumbnail}>
-          <Image src="/images/youtube.png" alt="video thumbnail" width={822} height={464} className={styles.videoThumbnailImage} />
-          <Image src="/icons/playbutton.png" alt="play" width={56} height={56} className={styles.videoPlayButton} />
+          {!isPlaying ? (
+            <>
+              <img
+                src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                alt="video thumbnail"
+                className={styles.videoThumbnailImage}
+              />
+              <button
+                type="button"
+                aria-label="재생"
+                className={styles.videoPlayButton}
+                onClick={() => setIsPlaying(true)}
+              >
+                <Image src="/icons/playbutton.png" alt="play" width={56} height={56} />
+              </button>
+            </>
+          ) : (
+            <iframe
+              className={styles.videoPlayer}
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          )}
         </div>
       )}
 
@@ -122,7 +189,10 @@ export default function TripPostDetail({ id }: TripPostDetailProps) {
           <Image src="/icons/menu.png" alt="list" width={20} height={20} />
           <span className={styles.outlineButtonText}>목록으로</span>
         </button>
-        <button className={styles.outlineButton}>
+        <button
+          className={styles.outlineButton}
+          onClick={() => router.push(`/tripposts/${id}/edit`, { scroll: true })}
+        >
           <Image src="/icons/edit.png" alt="edit" width={20} height={20} />
           <span className={styles.outlineButtonText}>수정하기</span>
         </button>

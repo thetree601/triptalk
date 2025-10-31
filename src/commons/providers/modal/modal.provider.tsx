@@ -73,7 +73,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             width: '100%',
             marginLeft: 16,
             marginRight: 16,
-            boxShadow: '0 10px 25px rgba(0,0,0,0.25)'
+            boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+            color: '#111111'
           }}
         >
           {content}

@@ -1,0 +1,90 @@
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @02-wireframe.mdc
+            - @03-ui.mdc
+            - @04-func.mdc
+
+==============================================
+
+조건-파일경로) 참고할 TSX  파일경로: src/components/tripposts-detail/index.tsx
+조건-파일경로) 참고할 CSS  파일경로: src/components/tripposts-detail/styles.module.css
+조건-피그마) 활용할MCP: CursorTalkToFigmaMCP(채널명: daqshn4o)
+조건-피그마) 댓글 아이템 내 액션 위치 기준 노드ID: 285:32506
+조건-파일경로) 구현될 HOOK 파일경로: src/components/tripposts-detail/hooks/index.comment.update.delete.hook.tsx
+조건-파일경로) 구현될 TEST 파일경로: src/components/tripposts-detail/tests/index.comment.update.delete.hook.spec.ts
+
+==============================================
+
+핵심요구사항) 병렬처리 구현을 위한 작업 방식 조건
+            - 다른 채팅에서 개발중인 파일을 수정 및 삭제 하지 말 것.
+            - 테스트 충돌을 방지하기 위해, 빌드테스트, 전체테스트를 하지 말 것.
+
+핵심요구사항) 다음의 기능을 playwright 테스트를 활용하여 TDD기반으로 구현하고, 테스트에 통과할 때까지 반복할 것.
+            1) 테스트 제외 라이브러리
+                - jest
+                - @testing-library/react
+
+            2) 테스트 조건
+                - timeout은 설정하지 않거나, 500ms 미만으로 설정할 것.
+                - 모든 페이지의 로드 식별 조건은 아래를 따를 것.
+                    - 페이지 로드 식별 요구사항: 고정식별자 data-testid 대기 방법
+                    - 페이지 로드 식별 금지사항: networkidle 대기 방법
+
+            5) 테스트시나리오
+                1. /tripposts/[id]에 접속하여 페이지 로드 확인
+                2. 하단 유저시나리오에 적절한 테스트시나리오를 생성하여 진행
+
+==============================================
+1. 댓글 목록 + 수정/삭제
+==============================================
+
+1-1) 댓글 목록 UI
+    - 등록된 댓글들이 목록으로 표시됨
+    - 각 댓글 항목에는 다음 정보가 표시되어야 함:
+        - 작성자
+        - 별점 (노란색 별로 표시)
+        - 내용
+        - 작성일시
+        - 수정 버튼 (댓글 우측) — 아이콘: /icons/edit.png
+        - 삭제 버튼 (댓글 우측) — 아이콘: /icons/close.png
+    - 수정/삭제 버튼의 배치는 피그마(노드 285:32506)의 위치와 정렬을 준수할 것
+
+1-2) 댓글 수정 (상세 페이지 인라인)
+    - 각 댓글 우측의 "수정" 버튼 클릭 시 해당 댓글을 수정 모드로 전환
+    - 수정 모드 폼 구성:
+        - 작성자: 기존 작성자 이름이 표시되지만 수정 불가 (readonly 또는 disabled)
+        - 비밀번호: 재입력 받는 입력 필드 (input type="password")
+        - 내용: 기존 내용이 채워진 상태로 표시되며 수정 가능
+    - 유저시나리오(댓글 수정하기)
+        1. 댓글 우측의 "수정" 버튼 클릭
+        2. 해당 댓글이 수정 모드로 전환됨
+        3. 비밀번호와 내용을 수정 후 "수정 완료" 클릭
+        4. 비밀번호 검증 수행 (기존 비밀번호와 일치하는지 확인)
+        5. 일치하면 updateBoardComment 호출, 성공 시 목록 새로고침 및 수정 모드 해제
+        6. 불일치 시 인라인 에러 메시지 표시: "비밀번호가 틀렸습니다. 재입력해주세요."
+    - 취소 기능: "취소" 클릭 시 수정 모드 해제 및 원래 표시로 복원
+
+1-3) 댓글 삭제
+    - 각 댓글 우측의 "삭제" 버튼 클릭 시 비밀번호 입력 창 또는 인라인 입력 노출
+    - 비밀번호 입력 후 "삭제" 클릭 → 검증 → deleteBoardComment 호출
+    - 성공 시 목록 새로고침, 실패 시 인라인 에러 표시
+
+==============================================
+2. GraphQL 스키마 명세 (수정/삭제)
+==============================================
+
+2-1) 댓글 수정 스키마
+    - updateBoardComment(updateBoardCommentInput: UpdateBoardCommentInput!, password: String, boardCommentId: ID!): BoardComment!
+    - UpdateBoardCommentInput { contents: String, rating: Float }
+    - 로컬 규약: password는 필수 입력으로 처리할 것
+
+2-2) 댓글 삭제 스키마
+    - deleteBoardComment(password: String, boardCommentId: ID!): ID!
+    - 로컬 규약: password는 필수 입력으로 처리할 것
+
+

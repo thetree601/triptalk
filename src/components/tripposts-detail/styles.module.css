@@ -28,15 +28,21 @@
 .divider { height: 1px; background: #e4e4e4; }
 
 .iconRow { display: flex; align-items: center; justify-content: flex-end; gap: 8px; height: 24px; margin: 16px 0; }
+.iconWrapper { position: relative; display: inline-flex; }
+.addressTooltip { position: absolute; top: -36px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.addressTooltip::after { content: ""; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); border-width: 6px 6px 0 6px; border-style: solid; border-color: #111 transparent transparent transparent; }
 
 .heroImageWrapper { margin-top: 24px; }
 .heroImage { object-fit: cover; }
+
+.heroImagesGrid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
 
 .contentText { white-space: pre-wrap; font-size: 16px; line-height: 24px; margin-top: 24px; }
 
 .videoThumbnail { margin: 24px auto 0; background: var(--color-background-secondary); height: 512px; max-width: 1280px; width: 100%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .videoThumbnailImage { width: 822px; height: 464px; object-fit: cover; }
-.videoPlayButton { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3)); }
+.videoPlayButton { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3)); display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 0; cursor: pointer; }
+.videoPlayer { width: 100%; height: 100%; }
 
 .reactionsRow { display: flex; align-items: center; justify-content: center; gap: 24px; height: 48px; margin-top: 24px; }
 .badArea, .goodArea { display: flex; flex-direction: column; align-items: center; gap: 4px; }

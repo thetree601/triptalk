@@ -1,0 +1,190 @@
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @04-func.mdc
+
+==============================================
+
+조건-파일경로) 구현될 TSX 파일경로: src/components/tripposts-new/index.tsx
+조건-파일경로) 구현될 CSS 파일경로: src/components/tripposts-new/styles.module.css
+조건-파일경로) 구현될 HOOK 파일경로: src/components/tripposts-new/hooks/index.form.hook.tsx
+조건-파일경로) 구현될 상세페이지 TSX 파일경로: src/components/tripposts-detail/index.tsx
+조건-파일경로) 구현될 상세페이지 CSS 파일경로: src/components/tripposts-detail/styles.module.css
+조건-파일경로) 구현될 TEST 파일경로: src/components/tripposts-new/tests/index.form.hook.spec.ts
+
+==============================================
+
+핵심요구사항-1) 사진 업로드 기능을 3개까지 업로드 가능하도록 수정할 것. 
+            현재 코드에서는 3개의 슬롯이 있지만 실제로는 사진 업로드가 한 개만 되고 있음. 
+
+            1) 기존 구현 상태
+                - UI는 3개의 이미지 슬롯([0,1,2])이 이미 존재함
+                - onFilesSelected 함수에서 uploadSlotRef.current의 slotIndex를 사용하여 해당 슬롯에 파일 저장
+                - 현재 로직은 이미 slotIndex 기반으로 동작하고 있으나, 실제 동작 확인이 필요함
+
+            2) 수정 요구사항
+                - 각 슬롯에서 개별적으로 이미지를 선택할 수 있어야 함
+                - 각 슬롯에 이미지가 업로드되어 있어도 다른 빈 슬롯에 추가 업로드 가능
+                - 최대 3개까지 업로드 가능
+                - 각 이미지는 개별적으로 삭제 가능 (removePreviewAt 함수는 이미 구현되어 있음)
+
+            3) 구현 가이드
+                - fileInputRef는 현재 단일 input으로 사용 중
+                - triggerFileSelect(slotIndex)로 슬롯 인덱스를 전달받고 있음
+                - uploadSlotRef.current에 slotIndex를 저장하고 있음
+                - onFilesSelected에서 uploadSlotRef.current의 slotIndex에 맞는 위치에 파일을 저장해야 함
+                - FileList에서 첫 번째 파일만 선택하는 로직은 유지하되, 각 슬롯별로 개별 선택 가능하도록 유지
+
+            4) 검증 조건
+                - 이미지 타입: image/jpeg, image/png, image/webp
+                - 최대 파일 크기: 5MB
+                - 최대 업로드 개수: 3개
+                - 각 슬롯은 독립적으로 파일 선택/삭제 가능
+
+            5) 상태 관리
+                - previews: (string | null)[] - 3개 슬롯의 미리보기 URL
+                - files: (File | null)[] - 3개 슬롯의 실제 파일 객체
+                - form의 images 필드는 files 배열에서 null을 제거한 File[] 배열로 관리
+
+핵심요구사항-2) 주소 검색 기능을 모달로 변경할 것.
+            현재는 postcodeLayer로 인라인 레이어 형태로 표시되고 있으나, Modal 컴포넌트를 사용하여 모달로 표시해야 함.
+
+            1) 기존 구현 상태
+                - react-daum-postcode의 DaumPostcodeEmbed 컴포넌트 사용 중
+                - isPostcodeOpen 상태로 레이어 표시/숨김 제어
+                - 현재는 postcodeLayer 클래스로 인라인 레이어 형태로 표시됨
+
+            2) 수정 요구사항
+                - 주소 검색 시 Modal 컴포넌트를 사용하여 모달로 표시
+                - 모달 내부에 DaumPostcodeEmbed 컴포넌트 배치
+                - 모달 닫기 버튼 또는 배경 클릭 시 주소 검색 모달 닫기
+                - 주소 선택 완료 시 모달 자동 닫기
+
+            3) 구현 가이드
+                - Modal 컴포넌트 경로: src/commons/components/modal.tsx
+                - Modal 컴포넌트 사용 시 variant, actions 등 적절한 props 설정
+                - 기존 postcodeLayer 스타일은 제거하고 Modal 내부에 배치
+                - onPostcodeComplete 콜백에서 주소 정보 설정 후 모달 닫기
+
+핵심요구사항-3) 유튜브 링크 입력 시 상세페이지에서 유튜브 영상을 미리보기로 표시하고, 재생 버튼 클릭 시 재생 가능하도록 구현할 것.
+
+            1) 기존 구현 상태
+                - 상세 페이지에서 board?.youtubeUrl이 있으면 정적 이미지(/images/youtube.png)와 재생 버튼 아이콘 표시
+                - 현재는 실제 유튜브 썸네일을 가져오지 않고 정적 이미지만 표시됨
+                - 재생 버튼 클릭 시 실제 재생 기능이 없음
+
+            2) 수정 요구사항
+                - 유튜브 URL에서 비디오 ID 추출
+                - 유튜브 API 또는 URL 패턴을 사용하여 썸네일 이미지 가져오기
+                - 썸네일을 기존 영상 이미지 자리에 표시 (미리보기 형태)
+                - 재생 버튼 클릭 시 유튜브 iframe 플레이어로 전환하여 바로 재생
+                - 재생 중에는 재생 버튼을 숨기고 iframe만 표시
+
+            3) 유튜브 URL 처리 가이드
+                - 지원할 URL 형식:
+                    - https://www.youtube.com/watch?v={VIDEO_ID}
+                    - https://youtu.be/{VIDEO_ID}
+                    - https://www.youtube.com/embed/{VIDEO_ID}
+                - 비디오 ID 추출 로직 구현 필요
+                - 썸네일 URL 형식: https://img.youtube.com/vi/{VIDEO_ID}/maxresdefault.jpg 또는 hqdefault.jpg
+
+            4) 구현 가이드
+                - 유튜브 URL에서 비디오 ID 추출하는 유틸 함수 생성 또는 인라인 처리
+                - 상태 관리: isPlaying 상태로 재생 여부 추적
+                - 초기 상태: 썸네일 이미지와 재생 버튼 표시
+                - 재생 버튼 클릭 시: iframe으로 전환하여 자동 재생
+                - iframe embed URL: https://www.youtube.com/embed/{VIDEO_ID}?autoplay=1
+
+            5) UI/UX 요구사항
+                - 썸네일 이미지는 기존 .videoThumbnail 컨테이너 안에 표시
+                - 재생 버튼은 썸네일 위에 오버레이 형태로 중앙 배치 (기존 스타일 유지)
+                - 재생 중에는 iframe이 컨테이너 전체를 채우도록 표시
+                - 반응형 처리: 모바일/데스크톱 모두 적절히 표시
+
+==============================================
+
+세부 구현 가이드)
+
+    - 등록 페이지 HOOK: src/components/tripposts-new/hooks/index.form.hook.tsx
+        - onFilesSelected 함수 확인 및 수정 (필요 시)
+            - uploadSlotRef.current의 slotIndex를 확인
+            - FileList에서 첫 번째 파일만 선택 (Array.from(list)[0])
+            - 선택된 파일의 유효성 검증 (타입, 크기)
+            - setFiles를 통해 해당 slotIndex 위치에 파일 저장
+            - setPreviews를 통해 해당 slotIndex 위치에 미리보기 URL 저장
+            - setValue('images', next.filter(Boolean) as File[])로 폼 값 업데이트
+        - removePreviewAt 함수는 이미 올바르게 구현되어 있음 (확인만 필요)
+            - previews 배열에서 해당 인덱스 null 처리
+            - files 배열에서 해당 인덱스 null 처리
+            - setValue로 images 필드 업데이트
+
+    - 등록 페이지 컴포넌트: src/components/tripposts-new/index.tsx
+        - 주소 검색 모달 변경
+            - 기존 postcodeLayer div를 Modal 컴포넌트로 교체
+            - Modal 내부에 DaumPostcodeEmbed 컴포넌트 배치
+            - Modal의 onClose prop에 closePostcode 연결
+            - Modal의 isOpen prop에 isPostcodeOpen 연결
+            - 모달 내부에 닫기 버튼 배치 (Modal 컴포넌트의 actions 활용 또는 별도 버튼)
+        - 이미지 업로드 UI
+            - 기존 UI 구조 유지 ([0,1,2].map으로 슬롯 렌더링)
+            - 각 슬롯에서 triggerFileSelect(slotIdx) 호출 시 해당 슬롯 인덱스 전달
+            - previews[slotIdx]가 있으면 미리보기 이미지와 삭제 버튼 표시
+            - previews[slotIdx]가 null이면 업로드 버튼 표시
+
+    - 상세 페이지 컴포넌트: src/components/tripposts-detail/index.tsx
+        - 유튜브 URL 처리 로직 추가
+            - board?.youtubeUrl에서 비디오 ID 추출 함수 구현
+            - 비디오 ID를 기반으로 썸네일 URL 생성
+            - 썸네일 이미지를 기존 정적 이미지 대신 표시
+        - 재생 상태 관리
+            - useState로 isPlaying 상태 추가
+            - 재생 버튼 클릭 시 isPlaying을 true로 설정
+        - 조건부 렌더링
+            - isPlaying이 false이면: 썸네일 이미지 + 재생 버튼 표시
+            - isPlaying이 true이면: 유튜브 iframe embed 표시
+        - 유튜브 URL 파싱 함수
+            - 다양한 유튜브 URL 형식을 처리
+            - 정규표현식 또는 URL 파싱을 사용하여 비디오 ID 추출
+
+    - 상세 페이지 스타일: src/components/tripposts-detail/styles.module.css
+        - .videoThumbnail 스타일 유지
+        - 썸네일 이미지 스타일 추가 (기존 정적 이미지 대신)
+        - iframe 스타일 추가 (전체 너비/높이, 적절한 비율 유지)
+        - 재생 버튼 오버레이 스타일 확인 (기존 스타일 유지)
+
+==============================================
+
+체크리스트)
+
+사진 업로드 관련:
+    - [ ] 각 이미지 슬롯에서 개별적으로 이미지를 선택할 수 있다
+    - [ ] 첫 번째 슬롯에 이미지가 있어도 두 번째, 세 번째 슬롯에 추가 업로드가 가능하다
+    - [ ] 각 슬롯의 이미지는 개별적으로 삭제 가능하다
+    - [ ] 최대 3개까지 업로드가 가능하다
+    - [ ] 파일 타입 검증이 올바르게 동작한다 (jpeg, png, webp만 허용)
+    - [ ] 파일 크기 검증이 올바르게 동작한다 (5MB 초과 시 처리)
+    - [ ] 미리보기가 각 슬롯에 올바르게 표시된다
+    - [ ] 폼 제출 시 3개까지의 이미지가 올바르게 업로드된다
+    - [ ] 이미지 삭제 후 다른 이미지를 같은 슬롯에 다시 업로드할 수 있다
+
+주소 검색 모달 관련:
+    - [ ] "우편번호 검색" 버튼 클릭 시 Modal 컴포넌트로 주소 검색 창이 표시된다
+    - [ ] 모달 내부에 DaumPostcodeEmbed 컴포넌트가 올바르게 표시된다
+    - [ ] 모달 배경 클릭 또는 닫기 버튼으로 모달을 닫을 수 있다
+    - [ ] 주소 선택 완료 시 자동으로 모달이 닫힌다
+    - [ ] 선택된 주소 정보가 폼 필드에 올바르게 반영된다
+
+유튜브 미리보기 및 재생 관련:
+    - [ ] 유튜브 URL에서 비디오 ID가 올바르게 추출된다
+    - [ ] 다양한 유튜브 URL 형식이 지원된다 (youtube.com/watch, youtu.be, embed)
+    - [ ] 유튜브 썸네일 이미지가 기존 정적 이미지 대신 표시된다
+    - [ ] 재생 버튼이 썸네일 위에 올바르게 표시된다
+    - [ ] 재생 버튼 클릭 시 iframe으로 전환되어 유튜브 영상이 재생된다
+    - [ ] iframe이 autoplay=1 옵션으로 자동 재생된다
+    - [ ] 재생 중에는 재생 버튼이 숨겨지고 iframe만 표시된다
+    - [ ] 반응형으로 모바일/데스크톱에서 모두 올바르게 표시된다
+

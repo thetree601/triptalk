@@ -30,6 +30,7 @@ export const URL_PATHS = {
   TRIPPOSTS: '/tripposts',
   TRIPPOSTS_DETAIL: '/tripposts/[id]',
   TRIPPOSTS_NEW: '/tripposts/new',
+  TRIPPOSTS_EDIT: '/tripposts/[id]/edit',
 } as const;
 
 // URL 경로별 상세 정보
@@ -81,6 +82,17 @@ export const ROUTE_CONFIG: Record<string, RouteInfo> = {
   // 여행포스트등록
   [URL_PATHS.TRIPPOSTS_NEW]: {
     path: URL_PATHS.TRIPPOSTS_NEW,
+    accessStatus: 'public',
+    visibility: {
+      header: true,
+      logo: true,
+      banner: false,
+    },
+  },
+
+  // 여행포스트수정
+  [URL_PATHS.TRIPPOSTS_EDIT]: {
+    path: URL_PATHS.TRIPPOSTS_EDIT,
     accessStatus: 'public',
     visibility: {
       header: true,
@@ -156,6 +168,13 @@ export const URL_UTILS = {
    */
   createTripPostDetailPath: (id: string | number): string => {
     return URL_PATHS.TRIPPOSTS_DETAIL.replace('[id]', String(id));
+  },
+
+  /**
+   * 여행포스트 수정 페이지 경로를 생성합니다
+   */
+  createTripPostEditPath: (id: string | number): string => {
+    return URL_PATHS.TRIPPOSTS_EDIT.replace('[id]', String(id));
   },
 } as const;
 

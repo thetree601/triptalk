@@ -1,0 +1,75 @@
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @02-wireframe.mdc
+            - @03-ui.mdc
+            - @04-func.mdc
+
+==============================================
+
+조건-파일경로) 참고할 TSX  파일경로: src/components/tripposts-detail/index.tsx
+조건-파일경로) 참고할 CSS  파일경로: src/components/tripposts-detail/styles.module.css
+조건-파일경로) 구현될 HOOK 파일경로: src/components/tripposts-detail/hooks/index.update.hook.ts
+조건-파일경로) 구현될 TEST 파일경로: src/components/tripposts-detail/tests/index.update.hook.spec.ts
+
+==============================================
+
+핵심요구사항) 병렬처리 구현을 위한 작업 방식 조건
+            - 다른 채팅에서 개발중인 파일을 수정 및 삭제 하지 말 것.
+            - 테스트 충돌을 방지하기 위해, 빌드테스트, 전체테스트를 하지 말 것.
+
+핵심요구사항) 다음의 기능을 playwright 테스트를 활용하여 TDD기반으로 구현하고, 테스트에 통과할 때까지 반복할 것.
+            1) 테스트 제외 라이브러리
+                - jest
+                - @testing-library/react
+
+            2) 테스트 조건
+                - timeout은 설정하지 않거나, 500ms 미만으로 설정할 것.
+                - 모든 페이지의 로드 식별 조건은 아래를 따를 것.
+                    - 페이지 로드 식별 요구사항: 고정식별자 data-testid 대기 방법
+                    - 페이지 로드 식별 금지사항: networkidle 대기 방법
+
+            5) 테스트시나리오
+                1. /tripposts/[id]에 접속하여 페이지 로드 확인
+                2. 하단 유저시나리오에 적절한 테스트시나리오를 생성하여 진행
+
+==============================================
+1. 게시글 수정 (보드 Update) — 등록 UI 재사용
+==============================================
+
+1-1) 수정 페이지 진입 및 UI 재사용
+    - 상세 페이지 "수정하기" 버튼 클릭 시 게시글 수정 페이지로 이동
+    - 등록 페이지와 동일한 UI/레이아웃/스타일을 재사용할 것
+    - 수정 페이지에서의 차이점
+        - 작성자 입력란: 기존 작성자 표시, 수정 불가(readonly/disabled)
+        - 비밀번호 입력란: 필수 입력, 기존 비밀번호와 일치해야만 수정 가능
+        - 페이지 우측 하단 버튼 라벨: 등록 페이지의 "등록하기" → 수정 페이지에서는 "수정하기"로 변경
+        - 필수 입력: 비밀번호, 제목(title), 내용(contents)
+        - 선택 입력: 그 외 항목(youtubeUrl, images, 주소 등)
+
+1-2) GraphQL 스키마
+    - updateBoard(updateBoardInput: UpdateBoardInput!, password: String, boardId: ID!): Board!
+    - UpdateBoardInput { title: String, contents: String, youtubeUrl: String, boardAddress: BoardAddressInput, images: [String!] }
+    - Board { _id: ID!, writer: String, title: String!, contents: String!, youtubeUrl: String, likeCount: Int!, dislikeCount: Int!, images: [String!], boardAddress: BoardAddress, user: User, createdAt: DateTime!, updatedAt: DateTime!, deletedAt: DateTime }
+    - 로컬 규약: 비밀번호(password)는 필수 입력으로 처리할 것
+
+1-3) 유저시나리오(게시글 수정)
+    1. 상세 페이지에서 "수정하기" 버튼 클릭
+    2. 수정 페이지로 이동하며, 등록 페이지와 동일한 레이아웃/스타일이 로드됨
+        - 작성자 입력란은 기존 값으로 채워지고 비활성화됨
+        - 버튼 라벨은 "수정하기"로 표시
+    3. 제목, 내용(필수)을 포함해 필요한 항목을 수정하고 비밀번호를 입력
+    4. "수정하기" 버튼 클릭 시 비밀번호 일치 검증 수행
+        - 일치하는 경우: updateBoard 호출 → 성공 시 "수정되었습니다" 모달 표시 → 확인 클릭 시 수정된 상세 페이지로 라우팅 및 갱신
+        - 불일치하는 경우: "비밀번호가 틀렸습니다. 재입력해주세요" 모달 표시 → 확인 클릭 시 모달 닫힘 및 비밀번호 필드 포커스/초기화
+
+1-4) 구현 세부 규약
+    - 폼: react-hook-form, @hookform/resolvers 사용
+    - 검증: zod 사용
+    - 비밀번호/제목/내용은 zod로 필수 검증 처리
+    - 이미지/유튜브URL/주소는 선택값으로 검증
+    - 성공/실패 모달은 공용 모달 프로바이더를 사용하고, 접근성 문구를 포함

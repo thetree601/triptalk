@@ -1,37 +1,69 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import DaumPostcodeEmbed from 'react-daum-postcode';
 import { Modal } from '@/commons/components/modal';
-import styles from './styles.module.css';
-import { useTripPostNewForm } from './hooks/index.form.hook';
+import styles from '../tripposts-new/styles.module.css';
+import { useTripPostUpdateForm } from '@/components/tripposts-detail/hooks/index.update.hook';
+import { useQuery } from '@apollo/client/react';
+import type { Board } from '@/lib/apollo/client';
+import { FETCH_BOARD } from '@/lib/graphql/queries/boards';
 
-export default function TripPostsNew() {
+interface TripPostsEditProps {
+  id: string;
+}
+
+export default function TripPostsEdit({ id }: TripPostsEditProps) {
+  const { data } = useQuery<{ fetchBoard: Board }>(FETCH_BOARD, { variables: { boardId: id } });
+  const board = data?.fetchBoard;
+  // ensure new page starts at top
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+  }, []);
+
   const {
     register,
     handleSubmit,
-    formState,
     errors,
     onSubmit,
     isSubmitting,
-    isPostcodeOpen,
-    openPostcode,
-    closePostcode,
-    onPostcodeComplete,
     fileInputRef,
     previews,
     triggerFileSelect,
     onFilesSelected,
     removePreviewAt,
-  } = useTripPostNewForm();
+    isInitialized,
+    isPostcodeOpen,
+    openPostcode,
+    closePostcode,
+    onPostcodeComplete,
+  } = useTripPostUpdateForm(id, {
+    writer: board?.writer,
+    title: board?.title,
+    contents: board?.contents,
+    youtubeUrl: board?.youtubeUrl,
+    images: board?.images ?? [],
+    zipcode: board?.boardAddress?.zipcode ?? null,
+    address: board?.boardAddress?.address ?? null,
+    addressDetail: board?.boardAddress?.addressDetail ?? null,
+  });
+
+  if (!board || !isInitialized) return null;
 
   return (
-    <section className={styles.container} aria-labelledby="newPostHeading">
+    <section className={styles.container} aria-labelledby="editPostHeading">
+      <style jsx global>{`
+        /* Hide banner carousel and its immediate layout gap to avoid double spacing */
+        section[role="region"][aria-label="배너 캐러셀"] { display: none !important; }
+        section[role="region"][aria-label="배너 캐러셀"] + div { display: none !important; }
+      `}</style>
       <div className={styles.topGap} aria-hidden="true" />
 
       <div className={styles.frame}>
         <header className={styles.header}>
-          <h1 id="newPostHeading">게시물 등록</h1>
+          <h1 id="editPostHeading">게시물 수정</h1>
         </header>
 
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
@@ -47,10 +79,9 @@ export default function TripPostsNew() {
               {...register('writer')}
               className={styles.input}
               placeholder="작성자 명을 입력해 주세요."
+              disabled
+              readOnly
             />
-            {errors.writer?.message && (
-              <p className={styles.errorText} role="alert">{errors.writer.message as string}</p>
-            )}
           </div>
           <div className={styles.field}>
             <div className={styles.labelRow}>
@@ -111,7 +142,7 @@ export default function TripPostsNew() {
           )}
         </div>
 
-        {/* 주소 섹션 */}
+        {/* 주소 섹션 (등록 페이지와 동일 UI) */}
         <div className={styles.addressSection}>
           <div className={styles.rowZip}>
             <div className={styles.fieldNarrow}>
@@ -146,6 +177,7 @@ export default function TripPostsNew() {
               placeholder="상세주소"
             />
           </div>
+
           {isPostcodeOpen && (
             <Modal isOpen={isPostcodeOpen} onClose={closePostcode} title="우편번호 검색" actions="single">
               <div>
@@ -162,12 +194,7 @@ export default function TripPostsNew() {
           <div className={styles.labelRow}>
             <label htmlFor="youtube" className={styles.label}>유튜브 링크</label>
           </div>
-          <input
-            id="youtube"
-            {...register('youtube')}
-            className={styles.input}
-            placeholder="링크를 입력해 주세요."
-          />
+          <input id="youtube" {...register('youtube')} className={styles.input} placeholder="링크를 입력해 주세요." />
           {errors.youtube?.message && (
             <p className={styles.errorText} role="alert">{errors.youtube.message as string}</p>
           )}
@@ -175,7 +202,7 @@ export default function TripPostsNew() {
 
         <div className={styles.hr} aria-hidden="true" />
 
-        {/* 사진 첨부 */}
+        {/* 사진 첨부 (선택) */}
         <div className={styles.field}>
           <div className={styles.labelRow}>
             <label className={styles.label}>사진 첨부</label>
@@ -188,9 +215,7 @@ export default function TripPostsNew() {
                 return (
                   <div key={`preview-${slotIdx}`} className={styles.imageTile} aria-label={`업로드된 이미지 ${slotIdx + 1}`}>
                     <img src={src} alt="미리보기" className={styles.previewImg} />
-                    <button type="button" onClick={() => removePreviewAt(slotIdx)} className={styles.removeBadge} aria-label="이미지 삭제">
-                      ×
-                    </button>
+                    <button type="button" onClick={() => removePreviewAt(slotIdx)} className={styles.removeBadge} aria-label="이미지 삭제">×</button>
                   </div>
                 );
               }
@@ -206,11 +231,11 @@ export default function TripPostsNew() {
 
         {/* 푸터 버튼 */}
         <div className={styles.footer}>
-          <button type="button" className={`${styles.button} ${styles.ghost}`}>
+          <button type="button" className={`${styles.button} ${styles.ghost}`} onClick={() => history.back()}>
             취소
           </button>
-          <button type="submit" disabled={!formState.isValid || isSubmitting} className={`${styles.button} ${styles.primary}`}>
-            등록하기
+          <button type="submit" disabled={isSubmitting} className={`${styles.button} ${styles.primary}`}>
+            수정하기
           </button>
         </div>
         </form>

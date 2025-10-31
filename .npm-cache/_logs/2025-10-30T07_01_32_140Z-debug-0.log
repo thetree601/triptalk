@@ -14,3 +14,42 @@
 13 http fetch GET 200 https://registry.npmjs.org/cursor-talk-to-figma-socket 90ms (cache revalidated)
 14 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
 15 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+16 verbose stack Error: kill EPERM
+16 verbose stack     at ChildProcess.kill (node:internal/child_process:511:26)
+16 verbose stack     at process.handleSignal (/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/signal-manager.js:14:10)
+16 verbose stack     at process.emit (node:events:519:28)
+17 verbose pkgid triptalk@0.1.0
+18 error code EPERM
+19 error syscall kill
+20 error path /Users/sohee/Documents/triptalk
+21 error errno -1
+22 error Error: kill EPERM
+22 error     at ChildProcess.kill (node:internal/child_process:511:26)
+22 error     at process.handleSignal (/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/signal-manager.js:14:10)
+22 error     at process.emit (node:events:519:28) {
+22 error   errno: -1,
+22 error   code: 'EPERM',
+22 error   syscall: 'kill',
+22 error   cmd: 'sh',
+22 error   args: [ '-c', 'cursor-talk-to-figma-socket' ],
+22 error   stdout: null,
+22 error   stderr: null,
+22 error   event: 'npx',
+22 error   script: 'cursor-talk-to-figma-socket',
+22 error   pkgid: 'triptalk@0.1.0',
+22 error   path: '/Users/sohee/Documents/triptalk'
+22 error }
+23 error
+23 error The operation was rejected by your operating system.
+23 error It is likely you do not have the permissions to access this file as the current user
+23 error
+23 error If you believe this might be a permissions issue, please double-check the
+23 error permissions of the file and its containing directories, or try running
+23 error the command again as root/Administrator.
+24 verbose cwd /Users/sohee/Documents/triptalk
+25 verbose os Darwin 24.6.0
+26 verbose node v22.19.0
+27 verbose npm  v10.9.3
+28 verbose exit -1
+29 verbose code -1
+30 error A complete log of this run can be found in: /Users/sohee/Documents/triptalk/.npm-cache/_logs/2025-10-30T07_01_32_140Z-debug-0.log

@@ -3,7 +3,7 @@ import { onError } from '@apollo/client/link/error';
 
 // HTTP Link 설정
 const httpLink = createHttpLink({
-  uri: 'https://main-practice.codebootcamp.co.kr/graphql',
+  uri: '/api/graphql',
 });
 
 // 에러 처리 Link (간단한 버전)

@@ -1,0 +1,165 @@
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @02-wireframe.mdc
+            - @03-ui.mdc
+            - @04-func.mdc
+
+==============================================
+
+조건-파일경로) 참고할 TSX  파일경로: src/components/tripposts-detail/index.tsx
+조건-파일경로) 참고할 CSS  파일경로: src/components/tripposts-detail/styles.module.css
+조건-피그마) 활용할MCP: CursorTalkToFigmaMCP(채널명: daqshn4o)
+조건-피그마) 댓글 폼(작성자/비밀번호/내용) 기준 노드ID: 285:32565
+조건-피그마) 댓글 아이템 내 액션 위치 기준 노드ID: 285:32506
+조건-파일경로) 구현될 HOOK 파일경로: src/components/tripposts-detail/hooks/index.comment.*.hook.tsx
+조건-파일경로) 구현될 TEST 파일경로: src/components/tripposts-detail/tests/index.comment.*.hook.spec.ts
+
+==============================================
+
+핵심요구사항) 병렬처리 구현을 위한 작업 방식 조건
+            - 다른 채팅에서 개발중인 파일을 수정 및 삭제 하지 말 것.
+            - 테스트 충돌을 방지하기 위해, 빌드테스트, 전체테스트를 하지 말 것.
+
+핵심요구사항) 다음의 기능을 playwright 테스트를 활용하여 TDD기반으로 구현하고, 테스트에 통과할 때까지 반복할 것.
+            1) 테스트 제외 라이브러리
+                - jest
+                - @testing-library/react
+
+            2) 테스트 조건
+                - timeout은 설정하지 않거나, 500ms 미만으로 설정할 것.
+                - 모든 페이지의 로드 식별 조건은 아래를 따를 것.
+                    - 페이지 로드 식별 요구사항: 고정식별자 data-testid 대기 방법
+                    - 페이지 로드 식별 금지사항: networkidle 대기 방법
+
+            5) 테스트시나리오
+                1. /tripposts/[id]에 접속하여 페이지 로드 확인
+                2. 하단 유저시나리오에 적절한 테스트시나리오를 생성하여 진행
+
+핵심요구사항) 본 프롬프트는 두 개의 세부 프롬프트로 분리되었습니다. 아래 파일을 참조할 것.
+            - 등록: prompt.305.func.comment.create.txt
+            - 수정/삭제: prompt.307.func.comment.update.delete.txt
+
+==============================================
+1. 댓글 등록 기능
+==============================================
+
+1-1) 댓글 등록 폼 UI 구성
+    - 작성자 입력 박스 (input)
+    - 비밀번호 입력 박스 (input type="password")
+    - 내용 입력 박스 (textarea, 최대 100자 제한)
+    - 세 개의 입력 박스가 순서대로 위에서 아래로 배치되어야 함
+    - 기존 단일 textarea를 위의 세 개 입력 박스로 교체
+    - 댓글 등록 버튼은 그대로 유지
+    - 피그마 레이아웃(채널 daqshn4o, 노드 285:32565)의 구조와 간격을 준수할 것
+
+1-2) 별점 기능
+    - 기본 상태: 5개의 회색 별이 표시됨 (/icons/star.png 사용)
+    - 별 클릭 시: 클릭한 별과 그 이전의 별들이 노란색으로 변경됨 (/icons/star_bright.png 사용)
+    - 예: 3번째 별 클릭 시 → 1, 2, 3번째 별이 노란색, 4, 5번째 별은 회색
+    - 별점 상태는 댓글 등록 시 함께 전송되어야 함
+    - 댓글 등록 완료 후 별점을 초기 상태(모두 회색)로 리셋
+
+1-3) 댓글 등록 기능
+    - 라이브러리조건
+        - 폼: 이미 설치되어있는 react-hook-form, @hookform/resolvers를 사용할 것.
+        - 검증: 이미 설치되어있는 zod를 사용할 것.
+    - 입력 필드 검증
+        - 작성자 (writer): 필수 입력
+        - 비밀번호 (password): 필수 입력
+        - 내용 (contents): 필수 입력, 최대 100자 제한
+        - 별점 (rating): 1~5 사이의 숫자, 필수 선택
+    - 유저시나리오(댓글 등록하기)
+        1. 댓글 등록 폼에 작성자, 비밀번호, 내용을 입력
+        2. 별점을 선택 (1~5 중 하나)
+        3. "댓글 등록" 버튼 클릭
+        4. 입력값 검증 수행
+        5. 검증 통과 시 댓글 등록 API 호출 (GraphQL mutation 사용)
+        6. 등록 완료 후 폼 초기화 (작성자, 비밀번호, 내용, 별점 모두 초기화)
+        7. 댓글 목록 새로고침하여 새로 등록된 댓글 표시
+
+==============================================
+2. 댓글 목록 표시 및 수정/삭제 버튼
+==============================================
+
+2-1) 댓글 목록 UI
+    - 등록된 댓글들이 목록으로 표시됨
+    - 각 댓글 항목에는 다음 정보가 표시되어야 함:
+        - 작성자
+        - 별점 (노란색 별로 표시)
+        - 내용
+        - 작성일시
+        - 수정 버튼 (댓글 우측) — 아이콘: /icons/edit.png
+        - 삭제 버튼 (댓글 우측) — 아이콘: /icons/close.png
+    - 수정/삭제 버튼의 배치는 피그마(노드 285:32506)의 위치와 정렬을 준수할 것
+
+2-2) 댓글 수정 모드 (상세 페이지 내에서)
+    - 각 댓글 우측의 "수정" 버튼 클릭 시 해당 댓글을 수정 모드로 전환
+    - 수정 모드 폼 구성:
+        - 작성자: 기존 작성자 이름이 표시되지만 수정 불가 (readonly 또는 disabled)
+        - 비밀번호: 재입력 받는 입력 필드 (input type="password")
+        - 내용: 기존 내용이 채워진 상태로 표시되며 수정 가능
+    - 유저시나리오(댓글 수정하기 - 상세 페이지 내에서)
+        1. 댓글 우측의 "수정" 버튼 클릭
+        2. 해당 댓글이 수정 모드로 전환됨
+            - 작성자 필드는 기존 값이 표시되지만 수정 불가
+            - 비밀번호 필드는 비어있는 상태로 초기화 (재입력 필요)
+            - 내용 필드는 기존 내용이 채워진 상태로 표시
+        3. 비밀번호와 내용을 수정
+        4. "수정 완료" 버튼 클릭
+        5. 비밀번호 검증 수행 (기존 비밀번호와 일치하는지 확인)
+        6. 비밀번호가 일치하면 댓글 수정 API 호출 (GraphQL mutation: updateBoardComment)
+        7. 수정 완료 후 댓글 목록 새로고침하여 수정된 내용 표시
+        8. 수정 모드 해제
+    - 취소 기능
+        - 수정 모드에서 "취소" 버튼 클릭 시 수정 모드 해제
+        - 폼 초기화 및 원래 댓글 표시로 복원
+    - GraphQL 스키마 반영
+        - updateBoardComment(updateBoardCommentInput: UpdateBoardCommentInput!, password: String, boardCommentId: ID!): BoardComment!
+        - UpdateBoardCommentInput { contents: String, rating: Float }
+        - 비밀번호는 스키마에서 선택값이나, 로컬 요구사항으로 필수 입력으로 처리할 것
+
+2-3) 댓글 삭제 기능
+    - 각 댓글 우측의 "삭제" 버튼 클릭
+    - 삭제 모달 또는 입력창이 노출됨
+    - 비밀번호 입력 받음
+    - 유저시나리오(댓글 삭제하기)
+        1. 댓글 우측의 "삭제" 버튼 클릭
+        2. 비밀번호 입력 모달 또는 입력창이 표시됨
+        3. 비밀번호 입력
+        4. "삭제" 버튼 클릭
+        5. 비밀번호 검증 수행
+        6. 비밀번호가 일치하면 댓글 삭제 API 호출 (GraphQL mutation: deleteBoardComment)
+        7. 삭제 완료 후 댓글 목록 새로고침
+        8. 비밀번호가 틀리면 에러 메시지 표시 (모달: "비밀번호가 틀렸습니다. 재입력해주세요.")
+    - GraphQL 스키마 반영
+        - deleteBoardComment(password: String, boardCommentId: ID!): ID!
+        - 비밀번호는 스키마에서 선택값이나, 로컬 요구사항으로 필수 입력으로 처리할 것
+
+==============================================
+3. GraphQL 스키마 명세 및 적용 규약
+==============================================
+
+3-1) 댓글 등록 스키마
+    - createBoardComment(createBoardCommentInput: CreateBoardCommentInput!, boardId: ID!): BoardComment!
+    - CreateBoardCommentInput { writer: String, password: String, contents: String!, rating: Float! }
+    - 로컬 규약: writer, password는 필수 입력으로 처리할 것
+
+3-2) 댓글 수정 스키마
+    - updateBoardComment(updateBoardCommentInput: UpdateBoardCommentInput!, password: String, boardCommentId: ID!): BoardComment!
+    - UpdateBoardCommentInput { contents: String, rating: Float }
+    - 로컬 규약: password는 필수 입력으로 처리할 것
+
+3-3) 댓글 삭제 스키마
+    - deleteBoardComment(password: String, boardCommentId: ID!): ID!
+    - 로컬 규약: password는 필수 입력으로 처리할 것
+
+3-4) 별점 타입
+    - rating은 Float로 처리하되 UI에서는 1~5 정수 스텝으로 입력받아 Float로 전달
+
+// 게시글(보드) 수정 요구사항은 별도의 프롬프트 파일(prompt.306.func.board.update.txt)로 분리되었습니다.
+

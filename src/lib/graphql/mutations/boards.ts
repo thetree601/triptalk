@@ -58,3 +58,40 @@ export interface UploadFileResponse {
   uploadFile: { url: string };
 }
 
+// 게시글 수정 뮤테이션
+export const UPDATE_BOARD = gql`
+  mutation UpdateBoard($updateBoardInput: UpdateBoardInput!, $password: String, $boardId: ID!) {
+    updateBoard(updateBoardInput: $updateBoardInput, password: $password, boardId: $boardId) {
+      _id
+      title
+      contents
+      youtubeUrl
+      images
+      updatedAt
+    }
+  }
+`;
+
+export interface UpdateBoardInput {
+  title?: string | null;
+  contents?: string | null;
+  youtubeUrl?: string | null;
+  images?: string[] | null;
+  boardAddress?: {
+    zipcode?: string | null;
+    address?: string | null;
+    addressDetail?: string | null;
+  } | null;
+}
+
+export interface UpdateBoardResponse {
+  updateBoard: {
+    _id: string;
+    title: string;
+    contents: string;
+    youtubeUrl?: string | null;
+    images?: string[] | null;
+    updatedAt: string;
+  };
+}
+

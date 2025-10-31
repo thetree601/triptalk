@@ -88,7 +88,7 @@ export function useTripPostNewForm(): UseTripPostNewFormResult {
 
   const [createBoardMutation, { loading: isSubmitting }] = useMutation<CreateBoardResponse, { createBoardInput: CreateBoardInput }>(CREATE_BOARD);
   const uploadFileViaFetch = useCallback(async (file: File): Promise<string> => {
-    const endpoint = 'https://main-practice.codebootcamp.co.kr/graphql';
+    const endpoint = '/api/graphql';
     const form = new FormData();
     const operations = JSON.stringify({
       query: 'mutation UploadFile($file: Upload!) { uploadFile(file: $file) { url } }',
