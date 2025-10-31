@@ -197,7 +197,39 @@
 .dateInputs {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px; /* reduced to prevent right date clipping */
+}
+
+.dateNativeInput {
+  height: 32px;
+  width: 120px; /* ensure visible/interactive width */
+  border: none;
+  background: transparent;
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1c1c1c;
+  outline: none;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Hide native calendar icon to keep both icons visually identical */
+.dateNativeInput::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+.dateNativeInput::-ms-clear { display: none; }
+.dateNativeInput::-ms-reveal { display: none; }
+.dateNativeInput {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.calendarIcon {
+  flex: 0 0 24px; /* prevent overlap over first input */
+  cursor: pointer;
 }
 
 .dateInput {
@@ -337,7 +369,7 @@
 
 .tableHeader {
   display: grid;
-  grid-template-columns: 64px 1fr 100px 100px;
+  grid-template-columns: 64px 1fr 100px 100px 28px; /* last col for delete icon gutter */
   gap: 24px;
   padding: 0 24px; /* exact height via fixed row height */
   background: #ffffff;
@@ -376,7 +408,7 @@
 
 .tableRow {
   display: grid;
-  grid-template-columns: 64px 1fr 100px 100px;
+  grid-template-columns: 64px 1fr 100px 100px 28px; /* last col for delete icon gutter */
   gap: 24px;
   padding: 0 24px;
   background: #fff;
@@ -425,6 +457,37 @@
   line-height: 20px;
   color: #919191;
   text-align: center;
+}
+
+/* Actions (delete icon) */
+.cellActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteIconButton {
+  width: 28px; /* hit area */
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.tableRow:hover .deleteIconButton,
+.deleteIconButton:focus-visible {
+  opacity: 1;
+}
+
+.deleteIconImage {
+  width: 24px;
+  height: 24px;
 }
 
 /* Pagination */

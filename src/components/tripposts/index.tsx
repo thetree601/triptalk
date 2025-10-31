@@ -2,11 +2,14 @@
 import styles from './styles.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useQuery } from '@apollo/client/react';
+import { useQuery, useMutation } from '@apollo/client/react';
 import { FETCH_BOARDS_OF_THE_BEST, FETCH_BOARDS, FETCH_BOARDS_COUNT, type FetchBoardsOfTheBestResponse, type FetchBoardsResponse, type FetchBoardsVariables } from '@/lib/graphql/queries/boards';
+import { DELETE_BOARD, type DeleteBoardResponse } from '@/lib/graphql/mutations/boards';
+import { useModal } from '@/commons/providers/modal/modal.provider';
 import type { Board } from '@/lib/apollo/client';
 import { URL_UTILS } from '@/commons/constants/url';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 // Hot Post 타입 정의
 interface HotPost {
@@ -61,9 +64,45 @@ export default function TripPosts(): JSX.Element {
   }));
 
   // GraphQL: 게시판 목록 (기본 1페이지)
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchTitle, setSearchTitle] = useState<string>('');
+  const [debouncedTitle, setDebouncedTitle] = useState<string>('');
+  const [startDate, setStartDate] = useState<string>(''); // yyyy-mm-dd
+  const [endDate, setEndDate] = useState<string>('');     // yyyy-mm-dd
+  const startRef = useRef<HTMLInputElement>(null);
+  const endRef = useRef<HTMLInputElement>(null);
+
+  // URL 동기화
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (currentPage > 1) params.set('page', String(currentPage));
+    if (debouncedTitle.trim()) params.set('title', debouncedTitle.trim());
+    if (startDate) params.set('startDate', startDate);
+    if (endDate) params.set('endDate', endDate);
+    const query = params.toString();
+    router.push(query ? `/tripposts?${query}` : '/tripposts');
+  }, [currentPage, debouncedTitle, startDate, endDate, router]);
+
+  // 검색어 디바운스
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setDebouncedTitle(searchTitle);
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(id);
+  }, [searchTitle]);
   // 전체 개수 조회로 총 페이지 계산 (페이지당 10개 가정)
-  const { data: countData } = useQuery<{ fetchBoardsCount: number }>(FETCH_BOARDS_COUNT);
+  const { data: countData } = useQuery<{ fetchBoardsCount: number }>(
+    FETCH_BOARDS_COUNT,
+    {
+      variables: {
+        startDate: startDate ? new Date(startDate).toISOString() : undefined,
+        endDate: endDate ? new Date(endDate).toISOString() : undefined,
+        search: searchTitle || undefined
+      }
+    }
+  );
   const totalPages = Math.max(1, Math.ceil((countData?.fetchBoardsCount ?? 0) / 10));
   const canGoPrev = currentPage > 1;
   const canGoNext = currentPage < totalPages;
@@ -71,12 +110,20 @@ export default function TripPosts(): JSX.Element {
   const { data: boardsData, loading: boardsLoading } = useQuery<FetchBoardsResponse, FetchBoardsVariables>(
     FETCH_BOARDS,
     {
-      variables: { page: currentPage },
+      variables: {
+        page: currentPage,
+        startDate: startDate ? new Date(startDate).toISOString() : undefined,
+        endDate: endDate ? new Date(endDate).toISOString() : undefined,
+        search: debouncedTitle || undefined
+      },
       notifyOnNetworkStatusChange: true,
       fetchPolicy: 'network-only',
       nextFetchPolicy: 'cache-first',
     }
   );
+
+  const { openModal, closeModal } = useModal();
+  const [deleteBoardMutation] = useMutation<DeleteBoardResponse>(DELETE_BOARD);
   const boardPosts: BoardPost[] = useMemo(() => (
     (boardsData?.fetchBoards ?? []).map((b: Board, idx: number) => ({
       id: b._id,
@@ -149,29 +196,103 @@ export default function TripPosts(): JSX.Element {
           <div className={styles.searchControls}>
             <div className={styles.searchLeft}>
               <div className={styles.datePicker}>
-              <Image 
-                src="/icons/calendar.png" 
-                alt="달력" 
-                width={24} 
-                height={24} 
-                className={styles.calendarIcon}
-              />
               <div className={styles.dateInputs}>
-                <div className={styles.dateInput}>
-                  <span className={styles.datePlaceholder}>YYYY</span>
-                  <span className={styles.dateDot}>.</span>
-                  <span className={styles.datePlaceholder}>MM</span>
-                  <span className={styles.dateDot}>.</span>
-                  <span className={styles.datePlaceholder}>DD</span>
-                </div>
+                {/* 시작일 */}
+                <Image 
+                  src="/icons/calendar.png" 
+                  alt="달력" 
+                  width={24} 
+                  height={24} 
+                  className={styles.calendarIcon}
+                  role="button"
+                  aria-label="시작일 선택"
+                  tabIndex={0}
+                  onClick={() => {
+                    const el = startRef.current;
+                    if (!el) return;
+                    const anyEl = el as unknown as { showPicker?: () => void };
+                    if (typeof anyEl.showPicker === 'function') {
+                      anyEl.showPicker();
+                    } else {
+                      el.focus();
+                      el.click();
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      const el = startRef.current;
+                      if (!el) return;
+                      const anyEl = el as unknown as { showPicker?: () => void };
+                      if (typeof anyEl.showPicker === 'function') {
+                        anyEl.showPicker();
+                      } else {
+                        el.focus();
+                        el.click();
+                      }
+                    }
+                  }}
+                />
+                <input
+                  type="date"
+                  aria-label="시작일"
+                  ref={startRef}
+                  value={startDate}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setStartDate(v);
+                    setCurrentPage(1);
+                  }}
+                  className={styles.dateNativeInput}
+                />
                 <span className={styles.dateDash}>-</span>
-                <div className={styles.dateInput}>
-                  <span className={styles.datePlaceholder}>YYYY</span>
-                  <span className={styles.dateDot}>.</span>
-                  <span className={styles.datePlaceholder}>MM</span>
-                  <span className={styles.dateDot}>.</span>
-                  <span className={styles.datePlaceholder}>DD</span>
-                </div>
+                {/* 종료일 */}
+                <Image 
+                  src="/icons/calendar.png" 
+                  alt="달력" 
+                  width={24} 
+                  height={24} 
+                  className={styles.calendarIcon}
+                  role="button"
+                  aria-label="종료일 선택"
+                  tabIndex={0}
+                  onClick={() => {
+                    const el = endRef.current;
+                    if (!el) return;
+                    const anyEl = el as unknown as { showPicker?: () => void };
+                    if (typeof anyEl.showPicker === 'function') {
+                      anyEl.showPicker();
+                    } else {
+                      el.focus();
+                      el.click();
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      const el = endRef.current;
+                      if (!el) return;
+                      const anyEl = el as unknown as { showPicker?: () => void };
+                      if (typeof anyEl.showPicker === 'function') {
+                        anyEl.showPicker();
+                      } else {
+                        el.focus();
+                        el.click();
+                      }
+                    }
+                  }}
+                />
+                <input
+                  type="date"
+                  aria-label="종료일"
+                  ref={endRef}
+                  value={endDate}
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className={styles.dateNativeInput}
+                />
               </div>
               </div>
 
@@ -186,6 +307,8 @@ export default function TripPosts(): JSX.Element {
               <input 
                 type="text" 
                 placeholder="제목을 검색해 주세요." 
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
                 className={styles.searchInput}
               />
               </div>
@@ -240,6 +363,64 @@ export default function TripPosts(): JSX.Element {
                 <Link href={URL_UTILS.createTripPostDetailPath(post.id)} className={styles.cellDate}>
                   {post.date}
                 </Link>
+                <div className={styles.cellActions}>
+                  <button
+                    type="button"
+                    className={styles.deleteIconButton}
+                    aria-label="게시글 삭제"
+                    onClick={() => {
+                      openModal(
+                        <div>
+                          <div style={{ fontSize: 16, marginBottom: 16 }}>삭제하시겠습니까?</div>
+                          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                            <button
+                              onClick={closeModal}
+                              style={{
+                                height: 36,
+                                padding: '0 12px',
+                                background: '#eaeaea',
+                                border: 'none',
+                                borderRadius: 6,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              취소
+                            </button>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await deleteBoardMutation({
+                                    variables: { boardId: post.id },
+                                    optimisticResponse: { deleteBoard: post.id },
+                                    refetchQueries: [
+                                      { query: FETCH_BOARDS, variables: { page: currentPage } },
+                                      { query: FETCH_BOARDS_COUNT }
+                                    ]
+                                  });
+                                } finally {
+                                  closeModal();
+                                }
+                              }}
+                              style={{
+                                height: 36,
+                                padding: '0 12px',
+                                background: '#ff4d4f',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: 6,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              확인
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }}
+                  >
+                    <Image src="/icons/delete.png" alt="삭제" width={24} height={24} className={styles.deleteIconImage} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -250,7 +431,13 @@ export default function TripPosts(): JSX.Element {
                 aria-label="이전"
                 aria-disabled={!canGoPrev}
                 disabled={!canGoPrev}
-                onClick={() => canGoPrev && setCurrentPage((p) => Math.max(1, p - 1))}
+                onClick={() => {
+                  if (!canGoPrev) return;
+                  const windowSize = 5;
+                  const start = Math.floor((currentPage - 1) / windowSize) * windowSize + 1;
+                  const target = Math.max(1, start - windowSize);
+                  setCurrentPage(target);
+                }}
               >
                 <Image
                   src={canGoPrev ? '/icons/leftenable_outline_light_m.svg' : '/icons/leftdisabled_outline_light_m.svg'}
@@ -286,7 +473,13 @@ export default function TripPosts(): JSX.Element {
                 aria-label="다음"
                 aria-disabled={!canGoNext}
                 disabled={!canGoNext}
-                onClick={() => canGoNext && setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() => {
+                  if (!canGoNext) return;
+                  const windowSize = 5;
+                  const start = Math.floor((currentPage - 1) / windowSize) * windowSize + 1;
+                  const target = Math.min(totalPages, start + windowSize);
+                  setCurrentPage(target);
+                }}
               >
                 <Image
                   src={canGoNext ? '/icons/rightenable_outline_light_m.svg' : '/icons/rightdisabled_outline_light_m.svg'}

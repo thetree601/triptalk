@@ -57,9 +57,12 @@
 .commentsHeader { display: flex; align-items: center; gap: 8px; height: 24px; }
 .commentsTitle { font-size: 16px; font-weight: 600; }
 .ratingRow { display: flex; align-items: center; gap: 8px; height: 24px; margin-top: 24px; }
+.commentFields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.commentFieldInput { width: 100%; height: 40px; border: 1px solid #d4d3d3; border-radius: 8px; padding: 0 12px; color: #000; }
 .commentInputWrapper { margin-top: 24px; position: relative; }
 .commentInput { width: 100%; height: 144px; border: 1px solid #d4d3d3; border-radius: 8px; padding: 16px; color: #000; resize: none; }
 .commentCount { position: absolute; right: 16px; bottom: 12px; color: #ababab; font-weight: 500; }
+.commentError { color: #d93025; font-size: 12px; margin-top: 6px; }
 .commentActions { display: flex; justify-content: flex-end; margin-top: 16px; }
 .primaryButton { width: 99px; height: 48px; padding: 0; background: #000; color: #fff; border-radius: 8px; font-family: var(--typography-regular-font-family); font-size: var(--typography-regular-font-size); font-weight: var(--typography-regular-font-weight); line-height: var(--typography-regular-line-height); }
 .noComments { text-align: center; color: #777; font-size: 14px; margin-top: 16px; }
@@ -69,14 +72,29 @@
 .commentSeparator { height: 1px; background: #f0f0f0; margin: 40px 0; }
 .commentHeader { display: flex; align-items: center; gap: 12px; }
 .commentProfileImage { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
-.commentMeta { display: flex; flex-direction: column; gap: 4px; }
-.commentTopRow { display: flex; align-items: center; gap: 8px; }
+.commentMeta { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.commentTopRow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.commentTopLeft { display: flex; align-items: center; gap: 8px; }
+.commentTopRight { display: inline-flex; align-items: center; gap: 8px; }
 .commentName { font-size: 14px; font-weight: 600; }
 .commentDate { font-size: 12px; color: #9a9a9a; }
 .commentStars { display: flex; align-items: center; gap: 4px; }
 .commentText { margin-top: 8px; font-size: 14px; line-height: 20px; color: #333; }
 .commentFooter { margin-top: 8px; }
 .commentDateBottom { font-size: 12px; color: #9a9a9a; }
+
+/* Comment item action buttons (edit/delete) */
+.commentItemActions { display: inline-flex; gap: 8px; align-items: center; }
+.commentActionBtn { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 0; background: transparent; cursor: pointer; padding: 0; }
+
+/* Inline edit form */
+.commentEditForm { margin-top: 12px; }
+.commentEditGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.commentEditInput { width: 100%; height: 40px; border: 1px solid #d4d3d3; border-radius: 8px; padding: 0 12px; color: #000; }
+.commentEditTextarea { width: 100%; min-height: 120px; border: 1px solid #d4d3d3; border-radius: 8px; padding: 12px; color: #000; resize: vertical; margin-top: 12px; }
+.commentEditActions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.commentEditButtonPrimary { width: 99px; height: 40px; background: #000; color: #fff; border-radius: 8px; }
+.commentEditButtonGhost { width: 99px; height: 40px; background: #fff; color: #000; border: 1px solid #d4d3d3; border-radius: 8px; }
 
 .bottomGap { height: 40px; }
 

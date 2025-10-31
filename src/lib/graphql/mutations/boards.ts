@@ -95,3 +95,14 @@ export interface UpdateBoardResponse {
   };
 }
 
+// 게시글 삭제 뮤테이션
+export const DELETE_BOARD = gql`
+  mutation DeleteBoard($boardId: ID!) {
+    deleteBoard(boardId: $boardId)
+  }
+`;
+
+export interface DeleteBoardResponse {
+  deleteBoard: string; // ID!
+}
+

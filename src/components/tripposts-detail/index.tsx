@@ -10,6 +10,10 @@ import { FETCH_BOARD } from '@/lib/graphql/queries/boards';
 import type { Board } from '@/lib/apollo/client';
 import { LIKE_BOARD, DISLIKE_BOARD, type LikeBoardResponse, type DislikeBoardResponse } from '@/lib/graphql/mutations/boards';
 import { URL_PATHS } from '@/commons/constants/url';
+import { useTripPostCommentCreate } from './hooks/index.comment.create.hook';
+import { useQuery as useAqQuery } from '@apollo/client/react';
+import { FETCH_BOARD_COMMENTS, type FetchBoardCommentsResponse } from '@/lib/graphql/queries/boardComments';
+import { useTripPostCommentUpdateDelete } from './hooks/index.comment.update.delete.hook';
 
 interface TripPostDetailProps {
   id: string;
@@ -23,6 +27,23 @@ export default function TripPostDetail({ id }: TripPostDetailProps) {
   const [badCount, setBadCount] = useState<number>(0);
   const [goodCount, setGoodCount] = useState<number>(0);
   const [showAddressTooltip, setShowAddressTooltip] = useState<boolean>(false);
+  const {
+    writerRegister,
+    passwordRegister,
+    contentsRegister,
+    errors,
+    isSubmitting: isCommentSubmitting,
+    contentsLength,
+    rating,
+    setRating,
+    onSubmit: onSubmitComment,
+  } = useTripPostCommentCreate(id);
+
+  const { data: commentsData, refetch: refetchComments } = useAqQuery<FetchBoardCommentsResponse>(FETCH_BOARD_COMMENTS, { variables: { boardId: id, page: 1 } });
+  const comments = commentsData?.fetchBoardComments ?? [];
+  const { editState, errors: editErrors, startEdit, cancelEdit, setEditField, submitEdit, deleteComment, isMutating } = useTripPostCommentUpdateDelete(() => {
+    refetchComments();
+  });
 
   useEffect(() => {
     setBadCount(board?.dislikeCount ?? 0);
@@ -205,22 +226,120 @@ export default function TripPostDetail({ id }: TripPostDetailProps) {
           <Image src="/icons/chat.png" alt="chat" width={24} height={24} />
           <h2 className={styles.commentsTitle}>댓글</h2>
         </div>
-        <div className={styles.ratingRow}>
-          <Image src="/icons/star.png" alt="star" width={24} height={24} />
-          <Image src="/icons/star.png" alt="star" width={24} height={24} />
-          <Image src="/icons/star.png" alt="star" width={24} height={24} />
-          <Image src="/icons/star.png" alt="star" width={24} height={24} />
-          <Image src="/icons/star.png" alt="star" width={24} height={24} />
-        </div>
-        <div className={styles.commentInputWrapper}>
-          <textarea className={styles.commentInput} placeholder="댓글을 입력해 주세요." maxLength={100} />
-          <div className={styles.commentCount}>0/100</div>
-        </div>
-        <div className={styles.commentActions}>
-          <button className={styles.primaryButton}>댓글 등록</button>
-        </div>
+        <form onSubmit={onSubmitComment}>
+          <div className={styles.ratingRow}>
+            {[1,2,3,4,5].map((i) => (
+              <Image
+                key={i}
+                src={i <= rating ? '/icons/star_bright.png' : '/icons/star.png'}
+                alt="star"
+                width={24}
+                height={24}
+                onClick={() => setRating(i)}
+                style={{ cursor: 'pointer' }}
+              />
+            ))}
+          </div>
+
+          <div className={styles.commentFields}>
+            <input {...writerRegister} className={styles.commentFieldInput} placeholder="작성자" />
+            <input {...passwordRegister} type="password" className={styles.commentFieldInput} placeholder="비밀번호" />
+          </div>
+          {(errors.writer?.message || errors.password?.message) && (
+            <div className={styles.commentError} role="alert">
+              {(errors.writer?.message as string) || (errors.password?.message as string)}
+            </div>
+          )}
+
+          <div className={styles.commentInputWrapper}>
+            <textarea {...contentsRegister} className={styles.commentInput} placeholder="댓글을 입력해 주세요." maxLength={100} />
+            <div className={styles.commentCount}>{contentsLength}/100</div>
+          </div>
+          {errors.contents?.message && (
+            <div className={styles.commentError} role="alert">{errors.contents.message as string}</div>
+          )}
+
+          <div className={styles.commentActions}>
+            <button className={styles.primaryButton} disabled={isCommentSubmitting}>댓글 등록</button>
+          </div>
+        </form>
         <ul className={styles.commentList}>
-          {/* 실제 댓글 데이터가 있을 때만 목록을 렌더링합니다. 현재는 비워둡니다. */}
+          {comments.map((c) => (
+            <li key={c._id} className={styles.commentItem}>
+              <div className={styles.commentHeader}>
+                <div className={styles.commentProfileImage}>
+                  <Image src="/icons/person.png" alt="profile" width={32} height={32} />
+                </div>
+                <div className={styles.commentMeta}>
+                  <div className={styles.commentTopRow}>
+                    <div className={styles.commentTopLeft}>
+                      <span className={styles.commentName}>{c.writer ?? '익명'}</span>
+                      <div className={styles.commentStars}>
+                        {[1,2,3,4,5].map((i) => (
+                          <Image key={i} src={i <= Math.round(c.rating) ? '/icons/star_bright.png' : '/icons/star.png'} alt="star" width={24} height={24} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className={styles.commentTopRight}>
+                      <div className={styles.commentItemActions}>
+                        <button type="button" className={styles.commentActionBtn} onClick={() => startEdit(c._id, { contents: c.contents, rating: Math.round(c.rating) })} aria-label="댓글 수정">
+                          <Image src="/icons/edit.png" alt="edit" width={20} height={20} />
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.commentActionBtn}
+                          onClick={() => {
+                            const pw = window.prompt('비밀번호를 입력해 주세요.');
+                            if (pw != null) deleteComment(c._id, pw);
+                          }}
+                          aria-label="댓글 삭제"
+                        >
+                          <Image src="/icons/close.png" alt="delete" width={20} height={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  {/* 날짜는 하단 한 줄만 노출 (상단 제거) */}
+                </div>
+              </div>
+              {editState[c._id]?.isEditing ? (
+                <div className={styles.commentEditForm}>
+                  <div className={styles.commentEditGrid}>
+                    <input className={styles.commentEditInput} value={c.writer ?? '익명'} disabled readOnly />
+                    <input
+                      className={styles.commentEditInput}
+                      type="password"
+                      placeholder="비밀번호"
+                      value={editState[c._id]?.password ?? ''}
+                      onChange={(e) => setEditField(c._id, { password: e.target.value })}
+                    />
+                  </div>
+                  <textarea
+                    className={styles.commentEditTextarea}
+                    placeholder="내용"
+                    value={editState[c._id]?.contents ?? ''}
+                    onChange={(e) => setEditField(c._id, { contents: e.target.value })}
+                  />
+                  {editErrors[c._id] && (
+                    <div className={styles.commentError} role="alert">{editErrors[c._id]}</div>
+                  )}
+                  <div className={styles.commentEditActions}>
+                    <button type="button" className={styles.commentEditButtonGhost} onClick={() => cancelEdit(c._id)}>취소</button>
+                    <button type="button" className={styles.commentEditButtonPrimary} disabled={isMutating} onClick={() => submitEdit(c._id)}>수정하기</button>
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.commentText}>{c.contents}</div>
+              )}
+              <div className={styles.commentFooter}>
+                <span className={styles.commentDateBottom}>{(() => { const d = new Date(c.createdAt); const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,'0'); const day = String(d.getDate()).padStart(2,'0'); return `${y}.${m}.${day}`; })()}</span>
+              </div>
+              <div className={styles.commentSeparator} />
+            </li>
+          ))}
+          {comments.length === 0 && (
+            <li className={styles.noComments}>등록된 댓글이 없습니다.</li>
+          )}
         </ul>
       </section>
 
